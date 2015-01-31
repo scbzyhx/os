@@ -62,5 +62,8 @@ os_init_cont(void) {
 
 void
 welcome(void) {
-	printk("Hello, OS World!\n");
+	printk("Hello, OS World!%c,%%,%d,%s,%x\n",'a',1234,"12345",63);
+	printk("Hello, OS World!%d\n",1234);
+	printk("Hello, OS World!%s\n","12345");
+	
 }

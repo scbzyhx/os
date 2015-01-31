@@ -5,6 +5,7 @@
 #include "const.h"
 
 void printk(const char *ctl, ...);
+void int2Str(char*,uint32_t,uint32_t);
 
 #include "assert.h"
 
