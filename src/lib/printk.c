@@ -23,16 +23,16 @@ void recurInt2Str (char **str,int n, int base) {
     }
 }
 void int2Str(char* str,uint32_t n,uint32_t base) {    
-    if(base == 16)
+    
+    char *tmp = str;
+    recurInt2Str(&tmp,n,base);
+    if(tmp == str)
     {
-        *str = '0';
-        str++;
-        *str = 'x';
-        str++;
+        *tmp = '0';
+        tmp++;
     }
-    recurInt2Str(&str,n,base);
     //last 
-    *str = '\0';
+    *tmp = '\0';
 }
 
 void printStr(void (*printer)(char),const char *str) {

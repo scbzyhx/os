@@ -1,6 +1,7 @@
 #include "common.h"
 #include "x86/x86.h"
 #include "memory.h"
+#include "process.h"
 
 
 void init_page(void);
@@ -12,7 +13,6 @@ void init_proc(void);
 void welcome(void);
 
 void os_init_cont(void);
-
 void
 os_init(void) {
 	/* Notice that when we are here, IF is always 0 (see bootloader) */
@@ -62,7 +62,7 @@ os_init_cont(void) {
 
 void
 welcome(void) {
-	printk("Hello, OS World!%c,%%,%d,%s,%x\n",'a',1234,"12345",63);
+	printk("Hello, OS World!%c,%%,%d,%s,%x\n",'a',0xc0121212,"12345",63);
 	printk("Hello, OS World!%d\n",1234);
 	printk("Hello, OS World!%s\n","12345");
 	
