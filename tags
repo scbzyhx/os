@@ -4,7 +4,10 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+A	src/kernel/process/test.c	/^void A() {$/;"	f
 ASFLAGS	Makefile	/^ASFLAGS = -m32 -MD -I.\/include$/;"	m
+B	src/kernel/process/test.c	/^void B() {$/;"	f
+C	src/kernel/process/test.c	/^void C() {$/;"	f
 CC	Makefile	/^CC      = gcc$/;"	m
 CFILES	Makefile	/^CFILES  = $(shell find src\/ -name "*.c")$/;"	m
 CFLAGS	Makefile	/^CFLAGS  = -m32 -static -ggdb -MD -Wall -Werror -I.\/include -O2 \\$/;"	m
@@ -12,6 +15,7 @@ CR0	include/x86/cpu.h	/^typedef union CR0 {$/;"	u
 CR0	include/x86/cpu.h	/^} CR0;$/;"	t	typeref:union:CR0
 CR3	include/x86/cpu.h	/^typedef union CR3 {$/;"	u
 CR3	include/x86/cpu.h	/^} CR3;$/;"	t	typeref:union:CR3
+D	src/kernel/process/test.c	/^void D() {$/;"	f
 DPL_KERNEL	include/x86/memory.h	9;"	d
 DPL_USER	include/x86/memory.h	10;"	d
 ELFHeader	boot/boot.h	/^struct ELFHeader {$/;"	s
@@ -42,6 +46,10 @@ PAGE_SIZE	include/x86/memory.h	28;"	d
 PCB	include/process.h	/^typedef struct PCB {$/;"	s
 PCB	include/process.h	/^} PCB;$/;"	t	typeref:struct:PCB
 PCB_NUM	include/process.h	5;"	d
+PCB_of_thread_A	src/kernel/process/test.c	/^PCB *PCB_of_thread_A;$/;"	v
+PCB_of_thread_B	src/kernel/process/test.c	/^PCB *PCB_of_thread_B;$/;"	v
+PCB_of_thread_C	src/kernel/process/test.c	/^PCB *PCB_of_thread_C;$/;"	v
+PCB_of_thread_D	src/kernel/process/test.c	/^PCB *PCB_of_thread_D;$/;"	v
 PDE	include/x86/memory.h	/^} PDE;$/;"	t	typeref:union:PageDirectoryEntry
 PD_SIZE	include/x86/memory.h	31;"	d
 PHY_MEM	include/memory.h	27;"	d
@@ -75,10 +83,13 @@ SFILES	Makefile	/^SFILES  = $(shell find src\/ -name "*.S")$/;"	m
 STATE	include/process.h	/^enum STATE {$/;"	g
 SegDesc	include/x86/memory.h	/^} SegDesc;$/;"	t	typeref:struct:SegmentDescriptor
 SegmentDescriptor	include/x86/memory.h	/^typedef struct SegmentDescriptor {$/;"	s
-TASK_EMPTY	include/process.h	/^    TASK_EMPTY = 0,  \/\/show an empty slot$/;"	e	enum:STATE
-TASK_INTERRUPTIBLE	include/process.h	/^    TASK_INTERRUPTIBLE$/;"	e	enum:STATE
-TASK_RUNNING	include/process.h	/^    TASK_RUNNING=1,$/;"	e	enum:STATE
+TASK_BLOCKED	include/process.h	/^    TASK_BLOCKED,   \/\/in block list$/;"	e	enum:STATE
+TASK_DEAD	include/process.h	/^    TASK_DEAD,      \/\/process exit$/;"	e	enum:STATE
+TASK_EMPTY	include/process.h	/^    TASK_EMPTY = 0,  \/\/show an empty slot, put in free4$/;"	e	enum:STATE
+TASK_INTERRUPTIBLE	include/process.h	/^    TASK_INTERRUPTIBLE,$/;"	e	enum:STATE
+TASK_RUNNING	include/process.h	/^    TASK_RUNNING=1, \/\/ put in ready list$/;"	e	enum:STATE
 TASK_STOPED	include/process.h	/^    TASK_STOPED,$/;"	e	enum:STATE
+TASK_UNINTERRUPTIBLE	include/process.h	/^    TASK_UNINTERRUPTIBLE$/;"	e	enum:STATE
 TRAP_GATE_32	src/kernel/irq/idt.c	5;"	d	file:
 TSS	include/x86/memory.h	/^typedef struct TSS {$/;"	s
 TSS	include/x86/memory.h	/^} TSS;$/;"	t	typeref:struct:TSS
@@ -140,6 +151,7 @@ esp	include/x86/memory.h	/^	uint32_t esp, ss;									\/\/ only uses when DPL = 
 esp0	include/x86/memory.h	/^	uint32_t esp0;$/;"	m	struct:TSS
 extension_type	include/x86/cpu.h	/^		uint32_t extension_type      : 1;$/;"	m	struct:CR0::__anon3
 false	include/const.h	5;"	d
+ffun	src/kernel/process/util.c	/^void ffun() {$/;"	f
 filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
@@ -272,6 +284,7 @@ segment_type	include/x86/memory.h	/^	uint32_t segment_type        : 1;$/;"	m	str
 serial_idle	src/lib/serial.c	/^serial_idle(void) {$/;"	f	file:
 serial_printc	src/lib/serial.c	/^serial_printc(char ch) {$/;"	f
 set_intr	src/kernel/irq/idt.c	/^static void set_intr(GateDesc *ptr, uint32_t selector, uint32_t offset, uint32_t dpl) {$/;"	f	file:
+set_kthread_state	src/kernel/process/util.c	/^void set_kthread_state(PCB *p, enum STATE state) {$/;"	f
 set_segment	src/kernel/memory/kvm.c	/^set_segment(SegDesc *ptr, uint32_t pl, uint32_t type) {$/;"	f	file:
 set_trap	src/kernel/irq/idt.c	/^static void set_trap(GateDesc *ptr, uint32_t selector, uint32_t offset, uint32_t dpl) {$/;"	f	file:
 set_tss	src/kernel/memory/kvm.c	/^set_tss(SegDesc *ptr) {$/;"	f	file:
@@ -281,6 +294,7 @@ shnum	boot/boot.h	/^	unsigned short shnum;$/;"	m	struct:ELFHeader
 shoff	boot/boot.h	/^	unsigned int   shoff;$/;"	m	struct:ELFHeader
 shstrndx	boot/boot.h	/^	unsigned short shstrndx;$/;"	m	struct:ELFHeader
 size_t	include/types.h	/^typedef          int   size_t;$/;"	t
+sleep	src/kernel/process/util.c	/^void sleep(void) {$/;"	f
 soft_use	include/x86/memory.h	/^	uint32_t soft_use            : 1;$/;"	m	struct:SegmentDescriptor
 ss	include/x86/memory.h	/^	uint32_t esp, ss;									\/\/ only uses when DPL = 3$/;"	m	struct:TrapFrame
 ss0	include/x86/memory.h	/^	uint32_t ss0;$/;"	m	struct:TSS
@@ -293,7 +307,8 @@ strlen	src/lib/string.c	/^size_t strlen(const char *str) {$/;"	f
 switchTo	src/kernel/process/schedule.c	13;"	d	file:
 system	include/x86/memory.h	/^	uint32_t system           : 1;$/;"	m	struct:GateDescriptor
 task_switched	include/x86/cpu.h	/^		uint32_t task_switched       : 1;$/;"	m	struct:CR0::__anon3
-tf	include/process.h	/^	void *tf;$/;"	m	struct:PCB
+test_proc	src/kernel/process/test.c	/^test_proc() {$/;"	f
+tf	include/process.h	/^    void *tf;$/;"	m	struct:PCB
 threadWrapper	src/kernel/process/util.c	/^void threadWrapper(void *fun) {$/;"	f
 true	include/const.h	4;"	d
 tss	src/kernel/memory/kvm.c	/^static TSS tss; $/;"	v	file:
@@ -316,6 +331,7 @@ version	boot/boot.h	/^	unsigned int   version;$/;"	m	struct:ELFHeader
 vfprintf	src/lib/printk.c	/^void vfprintf(void (*printer)(char), const char *ctl, void **args) {$/;"	f
 wait_intr	include/x86/cpu.h	/^wait_intr() {$/;"	f
 waitdisk	boot/main.c	/^waitdisk(void) {$/;"	f
+wakeup	src/kernel/process/util.c	/^void wakeup(PCB *p) {$/;"	f
 welcome	src/kernel/main.c	/^welcome(void) {$/;"	f
 write_cr0	include/x86/cpu.h	/^write_cr0(CR0 *cr0) {$/;"	f
 write_cr3	include/x86/cpu.h	/^write_cr3(CR3 *cr3) {$/;"	f

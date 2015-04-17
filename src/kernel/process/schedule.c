@@ -21,24 +21,57 @@ ListHead ready ,block,free;
             "addl $8,%%esp\t\n" \
             "iret \t\n"\
         ::"r"(next->tf) );
-
+/*
+   schedule is invoked every IDT
+ */
 void
 schedule(void) {
-    //printk("%d\n",ready.next==&ready);
-    //printk("%d\n",(uint32_t)ready.next);
-   // return;
 	/* implement process/thread schedule here */
-	if(current->state == TASK_STOPED)
+	//PCB *last = current;
+	//PCB *next = NULL;
+	printk("schedule\n");
+	if(current->state == TASK_BLOCKED) {
+	    list_add_after(block.prev,&current->head);
+        current = NULL;
+    }else if(current->state != TASK_DEAD && current != &idle) {
+	    list_add_after(ready.prev,&current->head);
+    } else if(current->state == TASK_DEAD) {
         list_add_after(free.prev,&current->head);
-    if(ready.next == &ready)
-        return;
-    else
-    {
-        //current = list_entry(ready.next,PCB,head);
-        current = (PCB*)ready.next;
+        current->state = TASK_EMPTY;
+    }
+
+
+    if(ready.next == &ready) 
+        current = &idle;
+    else {
+        current = list_entry(ready.next,PCB,head);
         list_del(&current->head);
     }
-    switchTo(current);
+
+	/*
+	if(current->state == TASK_STOPED)
+	{
+	    //printk("stoped\n");
+        list_add_after(free.prev,&current->head);
+    }else if(last != &idle)
+        list_add_after(ready.prev,&current->head);
+
+
+    if(ready.next == &ready)
+    {
+        next = &idle;        
+    }else
+    {
+        next = list_entry(ready.next,PCB,head);
+        //current = list_entry(ready.next);
+        list_del(&next->head);
+    }
+    if(next == NULL)
+        next = &idle; //this should not happened
+    //printk("hello world");
+    current = next;
+    */
+ //switchTo(current);
     
 }
 

@@ -12,12 +12,9 @@ PCB* getFreePCB() {
 }
 
 void threadWrapper(void *fun) {
-    uint32_t tmp = (uint32_t)fun;
-    //((FUN)fun)();
-    current->state = TASK_STOPED;
-    while(1)
-         //
-        printk("in wrapper=%x\n",tmp);
+    ((FUN)fun)();
+    current->state = TASK_DEAD;
+    while(1);
 }
 
 PCB*
@@ -45,15 +42,21 @@ create_kthread(void *fun) {
     tf->ss = (uint32_t)fun;
     tf->esp = (uint32_t)tf;   
 
-   //put it into the tail of ready
-   list_add_after(ready.prev,&fr->head);
+    //fr->state = TASK_RUNNING;
+
+    //put it into the tail of ready
+    //list_add_after(ready.prev,&fr->head);
     
 	return fr;
 }
 void ffun() {
-    while(1)
+    //while(1)
+    //while(1)
+    printk("in fun\n");
+    printk("in fun\n");
     printk("in fun\n");
 }
+extern void test_proc();
 void
 init_proc() {
     //idle use the kernel stack of os
@@ -82,6 +85,29 @@ init_proc() {
     current->state = TASK_RUNNING;
     
     //init
-    create_kthread(ffun);
+ //   set_kthread_state(create_kthread(ffun),TASK_RUNNING);
+    test_proc();
+    
+}
+
+void sleep(void) {
+    current->state = TASK_BLOCKED;
+    asm volatile("int $0x80");
+}
+void wakeup(PCB *p) {
+    p->state = TASK_RUNNING;
+    list_del(&p->head);
+    list_add_after(ready.prev,&p->head);
+}
+void set_kthread_state(PCB *p, enum STATE state) {
+    if (state == TASK_RUNNING) {
+        //list_del(&p->head);
+        list_add_after(ready.prev,&p->head);
+    }else if(state == TASK_BLOCKED) {
+        //list_del(&p->head);
+        list_add_after(block.prev,&p->head);
+    } else {
+        assert(0);
+    }
 }
 

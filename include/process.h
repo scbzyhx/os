@@ -5,19 +5,23 @@
 #define PCB_NUM 64
 
 enum STATE {
-    TASK_EMPTY = 0,  //show an empty slot
-    TASK_RUNNING=1,
+    TASK_EMPTY = 0,  //show an empty slot, put in free4
+    TASK_RUNNING=1, // put in ready list
+    TASK_BLOCKED,   //in block list
+    TASK_DEAD,      //process exit
     TASK_STOPED,
-    TASK_INTERRUPTIBLE
+    TASK_INTERRUPTIBLE,
+    TASK_UNINTERRUPTIBLE
 };
 
 typedef struct PCB {
+    void *tf;
     struct ListHead head; //form a list for all process
     enum STATE state;     //process state
     pid_t pid;            //process id
     pid_t parent;         //parent process id
     struct PCB *ppcb;     //parent process pointer
-	void *tf;
+	//void *tf;
 	char kstack[KSTACK];
 } PCB;
 
@@ -29,5 +33,8 @@ extern ListHead block;
 extern ListHead free;
 
 PCB* create_kthread(void *fun);
+void set_kthread_state(PCB*,enum STATE);
+void sleep();
+void wakeup(PCB*);
 
 #endif
