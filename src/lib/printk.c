@@ -5,8 +5,9 @@ uint32_t uint2Str (char *str,uint32_t n, uint32_t base) {
     uint32_t quotient = n / base;
     char c;
     uint32_t pos = 0;
+    //uint32_t len = 0;
     
-    if(base > 0 )
+    if(n > 0 )
         pos = uint2Str(str,quotient,base);
     else //base == 0
         return 0;
@@ -24,12 +25,17 @@ uint32_t uint2Str (char *str,uint32_t n, uint32_t base) {
             }
             break;
         default:
-            assert(0):
+            assert(0);
     }
     str[pos] = c;
     return pos+1;
 }
 uint32_t int2Str(char* str,int32_t n,int32_t base) {    
+    if(n < 0) {
+        str[0] = '-';
+        n  = 0 - n;
+    }
+    return uint2Str(str+1,n,base);
     
 }
 
@@ -74,7 +80,7 @@ void vfprintf(void (*printer)(char), const char *ctl, void **args) {
                     break;
                 case 'x':
                     integer = (uint32_t)*args;
-                    int2Str(buf,integer,16);
+                    uint2Str(buf,integer,16);
                     printStr(printer,buf);
                     args++;
                     break;

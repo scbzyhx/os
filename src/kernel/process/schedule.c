@@ -10,7 +10,7 @@ ListHead ready ,block,free;
 //popl irq
 //pop error
 //iret
-#define switchTo(next) \
+/*#define switchTo(next) \
     asm( \
             "movl %0,%%esp\t\n" \
             "popal\t\n" \
@@ -20,7 +20,7 @@ ListHead ready ,block,free;
             "popl %%ds\t\n" \
             "addl $8,%%esp\t\n" \
             "iret \t\n"\
-        ::"r"(next->tf) );
+        ::"r"(next->tf) );*/
 /*
    schedule is invoked every IDT
  */
@@ -29,7 +29,7 @@ schedule(void) {
 	/* implement process/thread schedule here */
 	//PCB *last = current;
 	//PCB *next = NULL;
-	printk("schedule\n");
+	//printk("schedule\n");
 	if(current->state == TASK_BLOCKED) {
 	    list_add_after(block.prev,&current->head);
         current = NULL;

@@ -96,8 +96,10 @@ void sleep(void) {
 }
 void wakeup(PCB *p) {
     p->state = TASK_RUNNING;
+    lock();
     list_del(&p->head);
     list_add_after(ready.prev,&p->head);
+    unlock();
 }
 void set_kthread_state(PCB *p, enum STATE state) {
     if (state == TASK_RUNNING) {
