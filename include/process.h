@@ -16,10 +16,14 @@ enum STATE {
 
 typedef struct PCB {
     void *tf;
-    struct ListHead head; //form a list for all process
+    struct ListHead head; //form a list for all process,
+    struct ListHead sem_list; // wait on semaphore
+
     enum STATE state;     //process state
+    uint32_t intr_counter; //record intr count for recursive sti
     pid_t pid;            //process id
     pid_t parent;         //parent process id
+
     struct PCB *ppcb;     //parent process pointer
 	//void *tf;
 	char kstack[KSTACK];

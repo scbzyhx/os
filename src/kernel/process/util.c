@@ -41,9 +41,9 @@ create_kthread(void *fun) {
     */
     tf->ss = (uint32_t)fun;
     tf->esp = (uint32_t)tf;   
-
-    //fr->state = TASK_RUNNING;
-
+    
+    fr->intr_counter = 0;
+    
     //put it into the tail of ready
     //list_add_after(ready.prev,&fr->head);
     

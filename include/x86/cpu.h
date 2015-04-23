@@ -116,6 +116,6 @@ wait_intr() {
  */
 #define PER_CPU_VAR(x) (x)
 #define GET_PER_CPU_VAR(x)
-uint32_t PER_CPU_VAR(cli_lock_times)  = 0;
+extern uint32_t PER_CPU_VAR(cli_lock_times);//  = 0;
 
 #endif
