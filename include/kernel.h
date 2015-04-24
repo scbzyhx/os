@@ -6,4 +6,5 @@
 #include "memory.h"
 #include "process.h"
 #include "sem.h"
+#include "msg.h"
 #endif

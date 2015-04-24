@@ -6,7 +6,8 @@
 
 void printk(const char *ctl, ...);
 //void int2Str(char*,int32_t,int32_t);
-
+void lock();
+void unlock();
 #include "assert.h"
 
 

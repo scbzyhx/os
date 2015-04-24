@@ -9,8 +9,8 @@ typedef struct Semaphore {
 
 void P(Sem *);
 void V(Sem *);
-void lock();
-void unlock();
+//void lock();
+//void unlock();
 void init_sem(Sem *,int);
 
 
