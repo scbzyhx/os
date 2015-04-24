@@ -13,8 +13,21 @@ void init_proc(void);
 void welcome(void);
 
 void os_init_cont(void);
+
+void QINTR(void) {
+#define PORT_TIME 0x40
+#define FREQ_8253 1193182
+#define HZ 100000
+    int count =FREQ_8253 / HZ;
+    assert(count<65536);
+    out_byte(PORT_TIME+3,0X34);
+    out_byte(PORT_TIME,count%256);
+    out_byte(PORT_TIME,count/256);
+
+}
 void
 os_init(void) {
+    //QINTR();
 	/* Notice that when we are here, IF is always 0 (see bootloader) */
 
 	/* We must set up kernel virtual memory first because our kernel
@@ -62,8 +75,8 @@ os_init_cont(void) {
 
 void
 welcome(void) {
-	printk("Hello, OS World!%c,%%,%d,%s,%x\n",'a',0xc0121212,"12345",63);
-	printk("Hello, OS World!%d\n",1234);
-	printk("Hello, OS World!%s\n","12345");
+	printk("Hello, OS World!\n");//%c,%%,%d,%s,%x\n",'a',0xc0121212,"12345",63);
+	//printk("Hello, OS World!%d\n",1234);
+	//printk("Hello, OS World!%s\n","12345");
 	
 }

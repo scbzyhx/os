@@ -34,8 +34,9 @@ uint32_t int2Str(char* str,int32_t n,int32_t base) {
     if(n < 0) {
         str[0] = '-';
         n  = 0 - n;
+        return uint2Str(str+1,n,base);
     }
-    return uint2Str(str+1,n,base);
+    return uint2Str(str,n,base);
     
 }
 
@@ -61,8 +62,6 @@ void vfprintf(void (*printer)(char), const char *ctl, void **args) {
                 case 'd':
                     integer = (uint32_t)*args;
                     int2Str(buf,integer,10);
-                    //buf[0]= 'a';
-                    //buf[1] = '\0';
                     printStr(printer,buf);
                     args++;
 

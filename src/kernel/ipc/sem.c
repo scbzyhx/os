@@ -24,6 +24,7 @@ void P(Sem *s) {
 void V(Sem *s) {
     lock();
     //wakeup()
+    s->token++;
     if( ! list_empty(&s->block)) {
         PCB *tmp = list_entry(s->block.next, struct PCB,sem_list); 
         wakeup(tmp);

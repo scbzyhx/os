@@ -3,13 +3,8 @@
 PCB idle, *current = &idle;
 PCB pcbPool[PCB_NUM];
 ListHead ready ,block,free;
+pid_t global_pid = 5; //idle.id = 0
 
-//esp = tf
-//popal
-//popl gs,fs,es,ds
-//popl irq
-//pop error
-//iret
 /*#define switchTo(next) \
     asm( \
             "movl %0,%%esp\t\n" \

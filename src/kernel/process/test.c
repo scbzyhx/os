@@ -1,5 +1,5 @@
 #include "kernel.h"
-
+/*
 void A();
 void B();
 void C();
@@ -72,4 +72,4 @@ void D() {
         x++;
     }
 }
-
+*/

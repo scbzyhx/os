@@ -43,6 +43,16 @@ create_kthread(void *fun) {
     tf->esp = (uint32_t)tf;   
     
     fr->intr_counter = 0;
+    fr->state = TASK_BLOCKED;
+
+    list_init(&(fr->msg_list));
+    list_init(&(fr->sem_list));
+    list_init(&(fr->head));
+
+    //set the id of process
+    lock();
+    fr->pid = global_pid++;
+    unlock();
     
     //put it into the tail of ready
     //list_add_after(ready.prev,&fr->head);
@@ -56,7 +66,7 @@ void ffun() {
     printk("in fun\n");
     printk("in fun\n");
 }
-extern void test_proc();
+extern void test_msg();
 void
 init_proc() {
     //idle use the kernel stack of os
@@ -86,7 +96,8 @@ init_proc() {
     
     //init
  //   set_kthread_state(create_kthread(ffun),TASK_RUNNING);
-    test_proc();
+    //test_proc();
+    test_msg();
     
 }
 
@@ -95,14 +106,19 @@ void sleep(void) {
     asm volatile("int $0x80");
 }
 void wakeup(PCB *p) {
-    p->state = TASK_RUNNING;
+    //p->state = TASK_READ;
     lock();
-    list_del(&p->head);
-    list_add_after(ready.prev,&p->head);
+    if(p->state == TASK_BLOCKED) {
+        list_del(&p->head);
+        list_add_after(ready.prev,&p->head);
+        p->state =TASK_READY;
+
+
+    }
     unlock();
 }
 void set_kthread_state(PCB *p, enum STATE state) {
-    if (state == TASK_RUNNING) {
+    if (state == TASK_READY) {
         //list_del(&p->head);
         list_add_after(ready.prev,&p->head);
     }else if(state == TASK_BLOCKED) {
@@ -113,3 +129,35 @@ void set_kthread_state(PCB *p, enum STATE state) {
     }
 }
 
+
+//get PCB struct through pid_t
+//invoke with lock
+struct PCB* fetch_pcb(pid_t pid) {
+    //there should be an global, but there doesnot exists
+    //so find in block,ready and cuurent and idle accordingly
+    struct ListHead *ptr;
+    struct PCB *pcb;
+    /*
+       lock may be not good
+     */
+    
+    if (current->pid == pid ) {
+        assert(0);
+        //avoid storm
+    }
+
+    list_foreach(ptr, &ready) {
+        //list
+        pcb = list_entry(ptr,struct PCB, head);
+        if (pcb->pid == pid) {
+            return pcb;
+        }
+    }
+    list_foreach(ptr,&block) {
+        pcb = list_entry(ptr,struct PCB,head);
+        if (pcb->pid == pid) {
+            return pcb;
+        }
+    }
+    return NULL;
+}
