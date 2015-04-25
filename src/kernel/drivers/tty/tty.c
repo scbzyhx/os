@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "hal.h"
 #include "tty.h"
-
+#include "kcpy.h"
 pid_t TTY;
 
 void send_keymsg(void);
@@ -9,6 +9,7 @@ void send_keymsg(void);
 void init_console(void);
 void init_getty(void);
 static void ttyd(void);
+void print_msg(Msg*);
 
 void init_tty(void) {
 	add_irq_handle(1, send_keymsg);
@@ -25,6 +26,9 @@ ttyd(void) {
 
 	while (1) {
 		receive(ANY, &m);
+        
+        printk("ttyd\n");
+		print_msg(&m);
 		if (m.src == MSG_HARD_INTR) {
 			switch (m.type) {
 				case MSG_TTY_GETKEY:
@@ -58,7 +62,10 @@ ttyd(void) {
 					m.src = current->pid;
 					send(dest, &m);
 					break;
-				default: assert(0);
+				default:
+				    printk("after dev_read and dev_write\n");
+				    print_msg(&m);
+				    //assert(0);
 			}
 		}
 	}

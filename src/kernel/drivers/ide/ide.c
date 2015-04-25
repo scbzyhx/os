@@ -2,6 +2,7 @@
 #include "hal.h"
 #include "ide.h"
 #include "time.h"
+#include "kcpy.h"
 
 #define WRITEBACK_TIME  1  /* writeback cache for every 1 second */
 

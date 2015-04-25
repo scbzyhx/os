@@ -67,6 +67,7 @@ void ffun() {
     printk("in fun\n");
 }
 extern void test_msg();
+extern void init_driver();
 void
 init_proc() {
     //idle use the kernel stack of os
@@ -89,7 +90,7 @@ init_proc() {
     }
 
     //init idle
-    current->pid = 0;
+    current->pid = 1;
     current->parent = 0;
     current->head.prev = current->head.next = NULL;
     current->state = TASK_RUNNING;
@@ -97,7 +98,8 @@ init_proc() {
     //init
  //   set_kthread_state(create_kthread(ffun),TASK_RUNNING);
     //test_proc();
-    test_msg();
+   // test_msg();
+   init_driver();
     
 }
 

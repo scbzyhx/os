@@ -2,12 +2,16 @@
 #include "x86/x86.h"
 #include "tty.h"
 #include "term.h"
+#include "hal.h"
 
+void print_msg(Msg*);
 void
 send_keymsg(void) {
 	Msg m;
 	m.type = MSG_TTY_GETKEY;
 	m.src = MSG_HARD_INTR;
+	printk("in send_keymsg to %d\n",TTY);
+	print_msg(&m);
 	send(TTY, &m);
 }
 

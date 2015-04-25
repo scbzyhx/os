@@ -1,5 +1,7 @@
 #include "kernel.h"
 #include "string.h"
+
+void print_msg(Msg*);
 /*invoked locked
  */
 void _send(struct PCB *pcb,Msg *msg) {
@@ -15,6 +17,7 @@ void send(pid_t dest, Msg *msg) {
         printk("msg is NULL\n");
         return ;
     }
+    msg->dest = dest;
 
     /*
       pcb is NULL ,should do something
@@ -42,8 +45,10 @@ void _receive(pid_t src,Msg *msg) {
     Msg *pmsg;
     struct ListHead *ptr;
     if(list_empty(&(current->msg_list))) {
+        //printk("empty\n");
         sleep();
     }
+    //printk("not empty\n");
     while(1) {
         list_foreach(ptr,&(current->msg_list)) {
             pmsg = list_entry(ptr,Msg,list);
@@ -68,4 +73,9 @@ void receive(pid_t src, Msg *msg) {
     lock();
     _receive(src,msg);    
     unlock();
+}
+void print_msg(Msg *msg) {
+    printk("src=%d,dest=%d\n",msg->src,msg->dest);
+    printk("type or ret = %d\n",msg->type);
+    printk("union array i is %x, %x, %x, %x, %x\n",msg->i[0],msg->i[1],msg->i[2],msg->i[3],msg->i[4]);
 }

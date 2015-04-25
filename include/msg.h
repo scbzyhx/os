@@ -28,5 +28,5 @@ typedef struct Message {
 void send(pid_t, Msg *);
 //synchronized
 void receive(pid_t,Msg *);
-
+void printk_msg(Msg*);
 #endif

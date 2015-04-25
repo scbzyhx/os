@@ -4,6 +4,8 @@
 #include "string.h"
 #include "term.h"
 #include "time.h"
+#include "kcpy.h"
+#include "hal.h"
 
 Console ttys[NR_TTY];
 Console *current_consl;
@@ -267,12 +269,15 @@ init_consl(int tty_index) {
 	consl_sync(c);
 }
 
+void print_msg(Msg*);
 static void
 send_updatemsg(void) {
 	if (get_jiffy() % (HZ / 10) == 0) {
 		Msg m;
 		m.src = MSG_HARD_INTR;
 		m.type = MSG_TTY_UPDATE;
+		printk("in send_updatemsg to %x\n",TTY);
+		print_msg(&m);
 		send(TTY, &m);
 	}
 }

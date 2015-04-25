@@ -1,18 +1,18 @@
 #include "kernel.h"
-#include "string.h"
 #include "hal.h"
+#include "string.h"
 
 #define NR_DEV 16
 
-static Dev dev_pool[NR_DEV];
-static ListHead free, devices;
 
+static Dev dev_pool[NR_DEV];
+static ListHead freeDevs, devices;
 
 void init_hal(void) {
 	int i = 0;
-	list_init(&free);
+	list_init(&freeDevs);
 	for (i = 0; i < NR_DEV; i ++) {
-		list_add_before(&free, &dev_pool[i].list);
+		list_add_before(&freeDevs, &dev_pool[i].list);
 	}
 	list_init(&devices);
 }
@@ -41,13 +41,13 @@ void hal_get_id(const char *name, pid_t *pid, int *dev_id) {
 
 void hal_register(const char *name, pid_t pid, int dev_id) {
 	lock();
-	if (list_empty(&free)) {
+	if (list_empty(&freeDevs)) {
 		panic("no room for more device");
 	}
 	if(hal_get(name) != NULL) {
 		panic("device \"%s\" is already registered!\n", name);
 	}
-	Dev *dev = list_entry(free.next, Dev, list);
+	Dev *dev = list_entry(freeDevs.next, Dev, list);
 	list_del(&dev->list);
 	dev->name = name;
 	dev->pid = pid;
