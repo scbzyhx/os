@@ -1,13 +1,34 @@
 #include "kernel.h"
 #include "string.h"
+#define MAX_MSG 10240
+
 
 void print_msg(Msg*);
+void memcpy(void *, const void *, size_t );
 /*invoked locked
  */
 void _send(struct PCB *pcb,Msg *msg) {
     lock();
-    list_add_after(pcb->msg_list.prev,&(msg->list));
+    Msg *pmsg = NULL;
+    ListHead *plist = NULL;
+
+    /*pick one struct Msg*/
+    if(list_empty(&(pcb->msg_free) )==true) {
+        unlock();
+        return;
+    }
+    plist = pcb->msg_free.next;
+    list_del(plist);
+    pmsg = list_entry(plist, Msg,list);
+
+    //copy
+    memcpy((void*)pmsg,(const void*)msg,sizeof(Msg));
+//    printk("pcb pid = %x, msg_list addr = %x, prev=%x\n",pcb->pid,&pcb->msg_list,pcb->msg_list.prev);
+    list_add_after(pcb->msg_list.prev,&(pmsg->list));
+//    printk("addr of msg=%x\n",&(msg->list));
+//    printk("pcb pid = %x, msg_list addr = %x, next=%x\n",pcb->pid,&pcb->msg_list,pcb->msg_list.next->next);
     unlock();
+    return;
 }
 
 void send(pid_t dest, Msg *msg) {
@@ -44,11 +65,21 @@ void _receive(pid_t src,Msg *msg) {
     
     Msg *pmsg;
     struct ListHead *ptr;
+    lock();
     if(list_empty(&(current->msg_list))) {
         //printk("empty\n");
         sleep();
     }
-    //printk("not empty\n");
+    //if(current->msg_list.next == NULL) {
+        
+
+    {
+//        printk("receive\n");
+//        printk("current->pid=%x,next = %x,addr of msg_list= %x\n",current->pid,current->msg_list.next,current->msg_list);
+//        printk("judge empty=%x\n",list_empty(&(current->msg_list)));
+    }
+
+    //printk("not empty next = %x, msg_list = %x\n,",current->msg_list.next,current->msg_list);
     while(1) {
         list_foreach(ptr,&(current->msg_list)) {
             pmsg = list_entry(ptr,Msg,list);
@@ -59,12 +90,18 @@ void _receive(pid_t src,Msg *msg) {
                 memcpy((void*)msg,(void*)pmsg,sizeof(Msg));
                // printk("true condition\n");
                 //but how to free msgs
+//                printk("in receve the addr of msg=0x%x\n",pmsg);
+                //print_msg(pmsg);
+//                printk("pid = %x, msg_list add = %x, next=%x\n",current->pid,&current->msg_list,current->msg_list.next);
                 list_del(ptr);
+                //move to free
+                list_add_after(&(current->msg_free),ptr);
                 return;
             }
         }
         sleep();
     }
+    unlock();
     
 
 }
@@ -75,7 +112,7 @@ void receive(pid_t src, Msg *msg) {
     unlock();
 }
 void print_msg(Msg *msg) {
-    printk("src=%d,dest=%d\n",msg->src,msg->dest);
-    printk("type or ret = %d\n",msg->type);
-    printk("union array i is %x, %x, %x, %x, %x\n",msg->i[0],msg->i[1],msg->i[2],msg->i[3],msg->i[4]);
+//    printk("src=%d,dest=%d\n",msg->src,msg->dest);
+//    printk("type or ret = %d\n",msg->type);
+//    printk("union array i is %x, %x, %x, %x, %x\n",msg->i[0],msg->i[1],msg->i[2],msg->i[3],msg->i[4]);
 }

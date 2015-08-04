@@ -33,7 +33,7 @@ Dev	include/hal.h	/^} Dev;$/;"	t	typeref:struct:Device
 Device	include/hal.h	/^typedef struct Device {$/;"	s
 E	src/kernel/ipc/testmsg.c	/^void E () {$/;"	f
 ELFHeader	boot/boot.h	/^struct ELFHeader {$/;"	s
-FREQ_8253	src/kernel/drivers/timer/timer.c	9;"	d	file:
+FREQ_8253	src/kernel/drivers/timer/timer.c	10;"	d	file:
 FREQ_8253	src/kernel/main.c	19;"	d	file:
 FUN	src/kernel/process/util.c	/^typedef void(*FUN)(void);$/;"	t	file:
 GDT_ENTRY	boot/asm.h	2;"	d
@@ -52,7 +52,7 @@ IRQ_t	src/kernel/irq/irq_handle.c	/^struct IRQ_t {$/;"	s	file:
 KMEM	include/memory.h	24;"	d
 KOFFSET	boot/main.c	13;"	d	file:
 KOFFSET	include/memory.h	6;"	d
-KSTACK	include/process.h	4;"	d
+KSTACK	include/process.h	5;"	d
 K_ALT	src/kernel/drivers/tty/term.h	8;"	d
 K_BACK	src/kernel/drivers/tty/term.h	11;"	d
 K_CAPS	src/kernel/drivers/tty/term.h	4;"	d
@@ -81,7 +81,10 @@ LD	Makefile	/^LD      = ld$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS = -melf_i386$/;"	m
 ListHead	include/adt/list.h	/^struct ListHead {$/;"	s
 ListHead	include/adt/list.h	/^typedef struct ListHead ListHead;$/;"	t	typeref:struct:ListHead
+MAX_MSG	src/kernel/ipc/msg.c	3;"	d	file:
+MAX_TIMER	src/kernel/drivers/timer/timer.c	12;"	d	file:
 MSG_HARD_INTR	include/hal.h	10;"	d
+MSG_POOL_SIZE	include/process.h	7;"	d
 MSG_TTY_GETKEY	src/kernel/drivers/tty/tty.h	5;"	d
 MSG_TTY_UPDATE	src/kernel/drivers/tty/tty.h	6;"	d
 M_ALT	src/kernel/drivers/tty/term.h	32;"	d
@@ -103,18 +106,19 @@ NR_SEGMENTS	include/x86/memory.h	16;"	d
 NR_TTY	src/kernel/drivers/tty/tty.h	4;"	d
 NULL	include/const.h	7;"	d
 OBJS	Makefile	/^OBJS    = $(CFILES:.c=.o) $(SFILES:.S=.o)$/;"	m
+ONE_SECOND	include/timer.h	6;"	d
 P	src/kernel/ipc/sem.c	/^void P(Sem *s) {$/;"	f
 PAGE_SIZE	include/x86/memory.h	28;"	d
 PCB	include/process.h	/^typedef struct PCB {$/;"	s
 PCB	include/process.h	/^} PCB;$/;"	t	typeref:struct:PCB
-PCB_NUM	include/process.h	5;"	d
+PCB_NUM	include/process.h	6;"	d
 PDE	include/x86/memory.h	/^} PDE;$/;"	t	typeref:union:PageDirectoryEntry
 PD_SIZE	include/x86/memory.h	31;"	d
 PHY_MEM	include/memory.h	27;"	d
 PORT_PIC_MASTER	src/kernel/irq/i8259.c	3;"	d	file:
 PORT_PIC_SLAVE	src/kernel/irq/i8259.c	4;"	d	file:
-PORT_RTC	src/kernel/drivers/timer/timer.c	8;"	d	file:
-PORT_TIME	src/kernel/drivers/timer/timer.c	7;"	d	file:
+PORT_RTC	src/kernel/drivers/timer/timer.c	9;"	d	file:
+PORT_TIME	src/kernel/drivers/timer/timer.c	8;"	d	file:
 PORT_TIME	src/kernel/main.c	18;"	d	file:
 PTE	include/x86/memory.h	/^} PTE;$/;"	t	typeref:union:PageTableEntry
 PageDirectoryEntry	include/x86/memory.h	/^typedef union PageDirectoryEntry {$/;"	u
@@ -218,6 +222,7 @@ bool	include/types.h	/^typedef unsigned char  bool;$/;"	t
 bootmain	boot/main.c	/^bootmain(void) {$/;"	f
 buf	include/msg.h	/^            void *buf;$/;"	m	struct:Message::__anon2::__anon3
 buf	src/kernel/ipc/testpv.c	/^int buf[NBUF],f=0,r=0,g=1;$/;"	v
+busy	include/process.h	/^        struct ListHead busy;$/;"	m	struct:PCB::__anon8	typeref:struct:PCB::__anon8::ListHead
 cache	src/kernel/drivers/ide/cache.c	/^static struct SectorCache cache[NR_SEC_CACHE];$/;"	v	typeref:struct:SectorCache	file:
 cache_disable	include/x86/cpu.h	/^		uint32_t cache_disable       : 1;$/;"	m	struct:CR0::__anon6
 cache_fetch	src/kernel/drivers/ide/cache.c	/^cache_fetch(uint32_t sector) {$/;"	f	file:
@@ -286,6 +291,7 @@ ffun	src/kernel/process/util.c	/^void ffun() {$/;"	f
 filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
+free	include/process.h	/^        struct ListHead free;$/;"	m	struct:PCB::__anon8	typeref:struct:PCB::__anon8::ListHead
 free	src/kernel/process/schedule.c	/^ListHead ready ,block,free;$/;"	v
 freeDevs	src/kernel/drivers/hal.c	/^static ListHead freeDevs, devices;$/;"	v	file:
 fs	include/x86/memory.h	/^	uint32_t gs, fs, es, ds;							\/\/ data segment registers$/;"	m	struct:TrapFrame
@@ -337,6 +343,7 @@ init_i8253	src/kernel/drivers/timer/timer.c	/^init_i8253(void) {$/;"	f	file:
 init_ide	src/kernel/drivers/ide/ide.c	/^init_ide(void) {$/;"	f
 init_idt	src/kernel/irq/idt.c	/^void init_idt() {$/;"	f
 init_intr	src/kernel/irq/i8259.c	/^void init_intr(void) {$/;"	f
+init_msg_pool	src/kernel/process/util.c	/^void init_msg_pool(struct PCB *pcb) { $/;"	f
 init_page	src/kernel/memory/kvm.c	/^init_page(void) {$/;"	f
 init_proc	src/kernel/process/util.c	/^init_proc() {$/;"	f
 init_rt	src/kernel/drivers/timer/timer.c	/^init_rt(void) {$/;"	f	file:
@@ -367,6 +374,7 @@ limit_15_0	include/x86/memory.h	/^	uint32_t limit_15_0          : 16;$/;"	m	stru
 limit_19_16	include/x86/memory.h	/^	uint32_t limit_19_16         : 4;$/;"	m	struct:SegmentDescriptor
 list	include/hal.h	/^	ListHead list;$/;"	m	struct:Device
 list	include/msg.h	/^    ListHead list;$/;"	m	struct:Message
+list	src/kernel/drivers/timer/timer.c	/^    ListHead list;$/;"	m	struct:timer	file:
 list_add	include/adt/list.h	/^list_add(ListHead *prev, ListHead *next, ListHead *data) {$/;"	f
 list_add_after	include/adt/list.h	/^list_add_after(ListHead *list, ListHead *data) {$/;"	f
 list_add_before	include/adt/list.h	/^list_add_before(ListHead *list, ListHead *data) {$/;"	f
@@ -392,7 +400,10 @@ monitor_coprocessor	include/x86/cpu.h	/^		uint32_t monitor_coprocessor : 1;$/;"	
 month	include/time.h	/^	int year, month, day;$/;"	m	struct:Time
 movl	src/kernel/drivers/tty/console.c	/^movl(Console *c) {$/;"	f	file:
 movr	src/kernel/drivers/tty/console.c	/^movr(Console *c) {$/;"	f	file:
+msg	src/kernel/drivers/timer/timer.c	/^    Msg msg; \/\/to store the reply msg$/;"	m	struct:timer	file:
 msg_list	include/process.h	/^    struct ListHead msg_list; \/\/msg queue$/;"	m	struct:PCB	typeref:struct:PCB::ListHead
+msg_pool	include/process.h	/^    struct Message msg_pool[MSG_POOL_SIZE];$/;"	m	struct:PCB	typeref:struct:PCB::Message
+msg_pool_manager	include/process.h	/^    } msg_pool_manager;$/;"	m	struct:PCB	typeref:struct:PCB::__anon8
 mutex_r	src/kernel/ipc/testpv.c	/^Sem empty,full,mutex_r,mutex_w;$/;"	v
 mutex_w	src/kernel/ipc/testpv.c	/^Sem empty,full,mutex_r,mutex_w;$/;"	v
 name	include/hal.h	/^	const char *name;$/;"	m	struct:Device
@@ -443,6 +454,7 @@ phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
 phoff	boot/boot.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
 pid	include/hal.h	/^	pid_t pid;$/;"	m	struct:Device
 pid	include/process.h	/^    pid_t pid;            \/\/process id$/;"	m	struct:PCB
+pid	src/kernel/drivers/timer/timer.c	/^    pid_t pid;$/;"	m	struct:timer	file:
 pidA	src/kernel/ipc/testmsg.c	/^pid_t pidE,pidA,pidB,pidC,pidD;$/;"	v
 pidB	src/kernel/ipc/testmsg.c	/^pid_t pidE,pidA,pidB,pidC,pidD;$/;"	v
 pidC	src/kernel/ipc/testmsg.c	/^pid_t pidE,pidA,pidB,pidC,pidD;$/;"	v
@@ -458,6 +470,7 @@ present	include/x86/memory.h	/^	uint32_t present          : 1;$/;"	m	struct:Gate
 prev	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::ListHead
 prev	include/x86/memory.h	/^	uint32_t prev;			\/\/ don't care$/;"	m	struct:TSS
 printStr	src/lib/printk.c	/^void printStr(void (*printer)(char),const char *str) {$/;"	f
+print_msg	src/kernel/ipc/msg.c	/^void print_msg(Msg *msg) {$/;"	f
 printk	src/lib/printk.c	/^printk(const char *ctl, ...) {$/;"	f
 privilege_level	include/x86/memory.h	/^	uint32_t privilege_level     : 2;$/;"	m	struct:SegmentDescriptor
 privilege_level	include/x86/memory.h	/^	uint32_t privilege_level  : 2;$/;"	m	struct:GateDescriptor
@@ -532,6 +545,9 @@ test_setup	src/kernel/ipc/testpv.c	/^void test_setup(void) {$/;"	f
 tf	include/process.h	/^    void *tf;$/;"	m	struct:PCB
 threadWrapper	src/kernel/process/util.c	/^void threadWrapper(void *fun) {$/;"	f
 time_intr	src/kernel/drivers/ide/ide.c	/^time_intr(void) {$/;"	f	file:
+time_out	src/kernel/drivers/timer/timer.c	/^    int time_out; \/\/when reach 0,return message$/;"	m	struct:timer	file:
+timer	src/kernel/drivers/timer/timer.c	/^typedef struct timer{$/;"	s	file:
+timer	src/kernel/drivers/timer/timer.c	/^} timer;$/;"	t	typeref:struct:timer	file:
 timer_driver_thread	src/kernel/drivers/timer/timer.c	/^timer_driver_thread(void) {$/;"	f	file:
 token	include/sem.h	/^    volatile int token;$/;"	m	struct:Semaphore
 true	include/const.h	4;"	d

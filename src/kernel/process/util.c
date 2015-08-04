@@ -1,13 +1,25 @@
 #include "kernel.h"
 typedef void(*FUN)(void);
+
+void init_msg_pool(struct PCB *pcb) { 
+    int i = 0;
+    list_init(&(pcb->msg_free));
+    for(i=0;i<MSG_POOL_SIZE;++i) {
+        list_add_after(&(pcb->msg_free),&(pcb->msg_pool[i].list));
+    }
+}
+
+
 PCB* getFreePCB() {
 
     PCB* retp = NULL;
+    lock();
     if(free.next != &free)
     {
         retp = list_entry(free.next,PCB,head);
         list_del(&retp->head);
     }
+    unlock();
     return retp;
 }
 
@@ -48,6 +60,8 @@ create_kthread(void *fun) {
     list_init(&(fr->msg_list));
     list_init(&(fr->sem_list));
     list_init(&(fr->head));
+    
+    init_msg_pool(fr);
 
     //set the id of process
     lock();
@@ -144,6 +158,7 @@ struct PCB* fetch_pcb(pid_t pid) {
      */
     
     if (current->pid == pid ) {
+        //return current;
         assert(0);
         //avoid storm
     }

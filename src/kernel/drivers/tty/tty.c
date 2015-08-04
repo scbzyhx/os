@@ -27,8 +27,6 @@ ttyd(void) {
 	while (1) {
 		receive(ANY, &m);
         
-        printk("ttyd\n");
-		print_msg(&m);
 		if (m.src == MSG_HARD_INTR) {
 			switch (m.type) {
 				case MSG_TTY_GETKEY:
@@ -63,9 +61,9 @@ ttyd(void) {
 					send(dest, &m);
 					break;
 				default:
-				    printk("after dev_read and dev_write\n");
-				    print_msg(&m);
-				    //assert(0);
+				   // printk("after dev_read and dev_write\n");
+				    //print_msg(&m);
+				    assert(0);
 			}
 		}
 	}

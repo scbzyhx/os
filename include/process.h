@@ -1,8 +1,10 @@
 #ifndef __PROCESS_H__
 #define __PROCESS_H__
 #include "adt/list.h"
+#include "msg.h"
 #define KSTACK 4096
 #define PCB_NUM 64
+#define MSG_POOL_SIZE 10240
 
 enum STATE {
     TASK_EMPTY = 0,  //show an empty slot, put in free4
@@ -20,6 +22,7 @@ typedef struct PCB {
     struct ListHead head; //form a list for all process,
     struct ListHead sem_list; // wait on semaphore
     struct ListHead msg_list; //msg queue
+    struct ListHead msg_free;     //for free msg structure
 
     enum STATE state;     //process state
     uint32_t intr_counter; //record intr count for recursive sti
@@ -27,6 +30,7 @@ typedef struct PCB {
     pid_t parent;         //parent process id
 
     struct PCB *ppcb;     //parent process pointer
+    struct Message msg_pool[MSG_POOL_SIZE];
 	//void *tf;
 	char kstack[KSTACK];
 } PCB;

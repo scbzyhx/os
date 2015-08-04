@@ -1,7 +1,7 @@
 #ifndef __MSG_H__
 #define __MSG_H__
-#include "kernel.h"
-
+//#include "kernel.h"
+#include "adt/list.h"
 //for src 
 #define ANY -1
 
