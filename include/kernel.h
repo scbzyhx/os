@@ -7,6 +7,8 @@
 #include "process.h"
 #include "sem.h"
 #include "msg.h"
+#include "fs.h"
+
 extern PCB *current;
 extern PCB pcbPool[PCB_NUM];
 extern ListHead ready;
