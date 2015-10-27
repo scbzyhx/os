@@ -27,7 +27,7 @@ static void kmem_thread(void) {
 		} else if (m.type == DEV_READ) {
 		    uint8_t *pchar = (uint8_t*)(KOFFSET + m.offset);
 
-			copy_to_kernel(fetch_pcb(m.req_pid),&m.buf,pchar,m.len);
+			copy_to_kernel(fetch_pcb(m.req_pid),m.buf,pchar,m.len);
 		    
 			m.ret = m.len;
 			m.dest = m.src;

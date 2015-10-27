@@ -80,8 +80,11 @@ void ffun() {
     printk("in fun\n");
     printk("in fun\n");
 }
-extern void test_msg();
 extern void init_driver();
+
+//test kthread here
+extern void test_msg();
+extern void init_kmem_read_test();
 void
 init_proc() {
     //idle use the kernel stack of os
@@ -113,7 +116,8 @@ init_proc() {
  //   set_kthread_state(create_kthread(ffun),TASK_RUNNING);
     //test_proc();
    // test_msg();
-   init_driver();
+    init_driver();
+    init_kmem_read_test();
     
 }
 
