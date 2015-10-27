@@ -1,4 +1,6 @@
 #include "kernel.h"
+#include "hal.h"
+#include "kcpy.h"
 
 #define NR_MAX_FILE 64
 #define NR_FILE_SIZE (128*1024)
@@ -15,9 +17,10 @@ static void ram_thread(void);
 
 void init_ram(void) {
     //create thread
-    PCB *p = create_kthread(fs_thread);
+    printk("init_ram\n");
+    PCB *p = create_kthread(ram_thread);
     RAM = p->pid;
-    hal_register("ram",FS,0);
+    hal_register("ram",RAM,0);
     wakeup(p);
 }
 
@@ -28,32 +31,18 @@ static void ram_thread(void) {
 		receive(ANY, &m);
 
 		if (m.src == MSG_HARD_INTR) {
-			if (m.type == IDE_WRITEBACK) {
-				cache_writeback();
-			} else {
-				panic("IDE interrupt is leaking");
-			}
+		    //do nothting
 		} else if (m.type == DEV_READ) {
-			uint32_t i;
-			uint8_t data;
-			for (i = 0; i < m.len; i ++) {
-				data = read_byte(m.offset + i);
-				copy_from_kernel(fetch_pcb(m.req_pid), m.buf + i, &data, 1);
-			}
-			m.ret = i;
+			copy_to_kernel(fetch_pcb(m.req_pid),&m.buf,&disk[m.offset],m.len);
+			m.ret = m.len;
 			m.dest = m.src;
-			m.src = IDE;
+			m.src = RAM;
 			send(m.dest, &m);
 		} else if (m.type == DEV_WRITE) {
-			uint32_t i;
-			uint8_t data;
-			for (i = 0; i < m.len; i ++) {
-				copy_to_kernel(fetch_pcb(m.req_pid), &data, m.buf + i, 1);
-				write_byte(m.offset + i, data);
-			}
-			m.ret = i;
+			copy_to_kernel(fetch_pcb(m.req_pid),&disk[m.offset],&m.buf,m.len);
+			m.ret = m.len;
 			m.dest = m.src;
-			m.src = IDE;
+			m.src = RAM;
 			send(m.dest, &m);
 		}
 		else {
