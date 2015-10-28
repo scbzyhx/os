@@ -56,6 +56,7 @@ create_kthread(void *fun) {
     
     fr->intr_counter = 0;
     fr->state = TASK_BLOCKED;
+    fr->cr3.val = 0;
 
     list_init(&(fr->msg_list));
     list_init(&(fr->sem_list));
@@ -117,7 +118,7 @@ init_proc() {
     //test_proc();
    // test_msg();
     init_driver();
-    init_kmem_read_test();
+ //   init_kmem_read_test();
     
 }
 

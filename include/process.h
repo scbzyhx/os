@@ -2,6 +2,8 @@
 #define __PROCESS_H__
 #include "adt/list.h"
 #include "msg.h"
+#include "x86/x86.h"
+
 #define KSTACK 4096
 #define PCB_NUM 64
 #define MSG_POOL_SIZE 10240
@@ -28,6 +30,7 @@ typedef struct PCB {
     uint32_t intr_counter; //record intr count for recursive sti
     pid_t pid;            //process id
     pid_t parent;         //parent process id
+    CR3   cr3;
 
     struct PCB *ppcb;     //parent process pointer
     struct Message msg_pool[MSG_POOL_SIZE];

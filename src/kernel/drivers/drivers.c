@@ -7,6 +7,7 @@ void init_ide();
 void init_ram();
 void init_zero();
 void init_kmem();
+void init_mm();
 
 void init_driver() {
 	init_hal();
@@ -16,6 +17,7 @@ void init_driver() {
 	init_zero();
 	init_ram();
 	init_kmem();
+	init_mm();
 
 	hal_list();
 }
