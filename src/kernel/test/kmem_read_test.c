@@ -1,13 +1,15 @@
 #include "kernel.h"
 #include "hal.h"
+#include "fs.h"
+#include "mm.h"
 
 pid_t READ_KMEM;
-
+#define VA 0x08048000
 //size_t dev_read(const char *dev_name, pid_t reqst_pid, void *buf ,off_t offset, size_t len);
 void kmem_read_test_thread() {
     //do something here
-    uint8_t buf[1024];
-    size_t size = dev_read("kmem",READ_KMEM,buf,0x7c00,512);
+   /* uint8_t buf[129*1024];
+    size_t size = do_read(0,buf,0,749);
     uint32_t i;
     printk("size = %d\n",size);
     uint32_t count = 0;
@@ -19,8 +21,17 @@ void kmem_read_test_thread() {
         }
         tmp = buf[i];
         printk("%x ",tmp);
-    }
-    
+    }*/
+    /*now test memory allocation*/
+    int tmp = alloc_pages(current,VA,4096);
+    printk("after alloc, tmp=%d\n",tmp);
+    tmp = create_thread();
+    printk("new pid=%d\n",tmp);
+    Msg m;
+    receive(ANY,&m);
+   
+
+//    while(1) printk("test while\n");
 }
 
 void init_kmem_read_test(void) {

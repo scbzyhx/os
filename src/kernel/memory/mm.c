@@ -29,8 +29,8 @@ void init_mm(void) {
     uint32_t i;
     memset(mm_bits,'\0',sizeof(mm_bits));
     //init first 16MB
-    for(i = 0; i < (USER_PAGE_OFFSET >> 3); ++i)
-        mm_bits[i] = 0xFF; //set it as 
+    for(i = 0; i < (NR_USER_PAGE >> 3); ++i)
+        mm_bits[i] = 0x0; //set it as 
 
 
     hal_register("mm",MM_PID,0);
@@ -39,7 +39,7 @@ void init_mm(void) {
 
 }
 /*I ignore error in middle, In fact, I should releae page when some error occured. But I didn't*/
-static int new_page(PCB *pcb, uint32_t va) {
+static int _new_page(PCB *pcb, uint32_t va) {
     uint32_t page_n; //= find_free();
     uint32_t idx;
     void* ptr;
@@ -47,10 +47,11 @@ static int new_page(PCB *pcb, uint32_t va) {
     PTE *ptable;
     if(find_free(&page_n) != 0)
         return -1;
-
+    printk("pid=%d,cr3=%d\n",pcb->pid,pcb->cr3.val);
     if(pcb->cr3.val == 0) {
         //virtual address
         pdr = (PDE*) va_page(page_n); 
+        printk("page_n=%d, va_in_kernel=%x\n",page_n,(uint32_t)pdr);
 
         //initialization
         for(idx = 0;idx < NR_PDE; idx++)
@@ -58,8 +59,9 @@ static int new_page(PCB *pcb, uint32_t va) {
 
         //set kernel pte, in fact just 4 pdr entries
         ptable = (PTE*)(va_to_pa(get_kptable()));
+        printk("ptable_physical_addr=%x\n",(uint32_t)ptable);
 
-        for(idx = 0; idx < KMEM / (PAGE_SIZE*1024); idx++) {
+        for(idx = 0; idx < PHY_MEM / (PAGE_SIZE*1024); idx++) {
             make_pde(&pdr[idx + KOFFSET / (PAGE_SIZE*1024)],ptable);
             ptable = ptable + NR_PTE;
         }
@@ -69,7 +71,7 @@ static int new_page(PCB *pcb, uint32_t va) {
         pdr =  (PDE*) pa_page(page_n);
         pcb->cr3.val = 0;
         pcb->cr3.page_directory_base = (uint32_t)(pdr) >> 12;
-
+        printk("CR3=%x\n",pdr);
         set(page_n);
 
         if(find_free(&page_n) != 0)
@@ -79,6 +81,7 @@ static int new_page(PCB *pcb, uint32_t va) {
 
     pdr = (PDE*)pa_to_va((void*)((uint32_t)(pcb->cr3.page_directory_base)<<12));
     pdr = &pdr[va>>22];
+    printk("PDE = %x\n",pdr);
 
     if(pdr->val == 0) {
         //virtual address
@@ -89,6 +92,7 @@ static int new_page(PCB *pcb, uint32_t va) {
 
         /*physical address here*/
         ptable = (PTE*) pa_page(page_n);
+        printk("PHY OF PTE TABLE = %x\n",ptable);
         make_pde(pdr, ptable);
         
         set(page_n);
@@ -99,11 +103,15 @@ static int new_page(PCB *pcb, uint32_t va) {
 
     ptable = (PTE*)pa_to_va((void*)((uint32_t)(pdr->page_frame)<<12));
     ptable = &ptable[(va & 0x3ff000 )>>12]; // 0000 0000 0011 1111 1111 0000 0000 0000
+    
+    printk("BEFORE SET PAGE PTE = %x\n",ptable);
 
     if(ptable->val != 0) 
-        return 0; // or -1
+        return 0; // or -1 
 
     ptr = pa_page(page_n);
+
+    printk("PHY PTR = %x\n",ptr);
 
     make_pte(ptable,ptr);
 
@@ -111,6 +119,18 @@ static int new_page(PCB *pcb, uint32_t va) {
 
     return 0;
 
+
+}
+static int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
+    uint32_t va = va_start & 0xfffffc00; // 11111111 1111111 1111100 00000000
+    uint32_t end = va_start + memsz; 
+    end = (end & 0xfffffc00) + (0x1 << 12); 
+
+    for(; va < end; va += PAGE_SIZE) { 
+        if(_new_page(pcb,va) != 0) 
+            assert(0); // allcoate error, 
+    }
+    return 0;
 
 }
 
@@ -123,9 +143,12 @@ static void mm_thread(void) {
 
 		if (m.src == MSG_HARD_INTR) {
 		    //do nothting
-		} else if (m.type == NEW_PAGE) {
+		} else if (m.type == NEW_PAGE) { //infact DEV_READ
+		    printk("in mm_thread, m.req_pid=%d\n",m.req_pid);
 			pcb = fetch_pcb(m.req_pid); //req_pid store pid of thread, equal to source or not
-			m.ret = new_page(pcb,m.offset);
+			printk("req_pid=%d\n",pcb->pid);
+			m.ret = new_page(pcb,m.offset,m.len);
+			printk("mm_thread id=%x\n",m.req_pid);
 			
 			m.dest = m.src;
 			m.src = MM_PID;
@@ -145,8 +168,8 @@ static void mm_thread(void) {
 }
 
 static inline void find_pos(uint32_t *bucket, uint32_t *bit, uint32_t n) {
-    *bucket = n >> 8;
-    *bit = n % 8;
+    *bucket = n >> 3; // /8
+    *bit = n & 0x7; //%8
     assert(*bit >=0 && *bit < 8);
     return;
 }
@@ -156,7 +179,7 @@ static void set(uint32_t n) {
     uint32_t bucket;// = n >> 8;
     uint32_t bit;// = n % 8;
     find_pos(&bucket,&bit,n);
-    mm_bits[bucket] = mm_bits[bucket] & (0x1<<bit);
+    mm_bits[bucket] = mm_bits[bucket] | (0x1<<bit);
     return;
 
 }
@@ -192,6 +215,7 @@ static uint32_t find_free(uint32_t *n) {
     for(;ind <  NR_KERNEL_PAGE; ++ind) {
         if(is_free(ind) == 0) {
             *n = ind;
+            printk("page_n=%d\n",ind);
             return 0;
         }
     }
@@ -208,6 +232,15 @@ static inline void* va_page(uint32_t n) {
 }
 
 
+int alloc_pages(PCB* pcb, uint32_t va, uint32_t len) {
+     printk("in alloc_pages pid=%d\n",pcb->pid);
+     size_t ret = dev_read("mm",pcb->pid,NULL,va, len);
+     //must be successful
+     assert(ret==0);
+
+     return ret;
+    
+}
 
 
 

@@ -1,5 +1,6 @@
 #include "common.h"
 
+
 uint32_t uint2Str (char *str,uint32_t n, uint32_t base) {
     uint32_t reminder = n % base;
     uint32_t quotient = n / base;
@@ -31,6 +32,17 @@ uint32_t uint2Str (char *str,uint32_t n, uint32_t base) {
     return pos+1;
 }
 uint32_t int2Str(char* str,int32_t n,int32_t base) {    
+    
+    if (n==0) {
+        str[0] = '0';
+        str[1] = '\0';
+        return 2;
+    }
+
+    if(base == 16)
+        return uint2Str(str,(uint32_t)n,16);
+
+
     if(n < 0) {
         str[0] = '-';
         n  = 0 - n;
@@ -39,7 +51,6 @@ uint32_t int2Str(char* str,int32_t n,int32_t base) {
     return uint2Str(str,n,base);
     
 }
-
 void printStr(void (*printer)(char),const char *str) {
     while(*str != '\0'){
         printer(*str);
@@ -79,7 +90,7 @@ void vfprintf(void (*printer)(char), const char *ctl, void **args) {
                     break;
                 case 'x':
                     integer = (uint32_t)*args;
-                    uint2Str(buf,integer,16);
+                    int2Str(buf,integer,16);
                     printStr(printer,buf);
                     args++;
                     break;

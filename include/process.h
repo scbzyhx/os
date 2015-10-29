@@ -48,6 +48,7 @@ extern pid_t global_pid;
 */
 PCB* create_kthread(void *fun);
 void set_kthread_state(PCB*,enum STATE);
+pid_t create_thread();
 /*void sleep();
 void wakeup(PCB*);
 struct PCB* fetch_pcb(pid_t); //get PCB struct through pid_t

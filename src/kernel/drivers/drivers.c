@@ -8,6 +8,8 @@ void init_ram();
 void init_zero();
 void init_kmem();
 void init_mm();
+void init_fs();
+void init_pm();
 
 void init_driver() {
 	init_hal();
@@ -18,6 +20,8 @@ void init_driver() {
 	init_ram();
 	init_kmem();
 	init_mm();
+	init_fs();
+	init_pm();
 
 	hal_list();
 }

@@ -7,3 +7,4 @@ a.out
 *.txt
 /boot/bootblock
 /kernel
+tags

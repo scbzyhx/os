@@ -69,8 +69,8 @@ create_kthread(void *fun) {
     fr->pid = global_pid++;
     unlock();
     
-    //put it into the tail of ready
-    //list_add_after(ready.prev,&fr->head);
+    //put it into the tail of block
+    list_add_after(block.prev,&fr->head);
     
 	return fr;
 }
@@ -118,7 +118,7 @@ init_proc() {
     //test_proc();
    // test_msg();
     init_driver();
- //   init_kmem_read_test();
+    init_kmem_read_test();
     
 }
 

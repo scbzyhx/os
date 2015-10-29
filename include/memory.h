@@ -2,6 +2,7 @@
 #define __MEMORY_H__
 
 #include "x86/x86.h"
+#include "process.h"
 
 #define KOFFSET 0xC0000000
 
@@ -13,6 +14,7 @@ void make_invalid_pde(PDE *);
 void make_invalid_pte(PTE *);
 void make_pde(PDE *, void *);
 void make_pte(PTE *, void *);
+uint32_t pcb_va_to_pa(PCB* pcb, uint32_t va);
 
 #define va_to_pa(addr) \
 	((void*)(((uint32_t)(addr)) - KOFFSET))

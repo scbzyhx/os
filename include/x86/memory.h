@@ -117,6 +117,8 @@ typedef struct TrapFrame {
 	uint32_t esp, ss;									// only uses when DPL = 3
 } TrapFrame;
 
+uint32_t va_to_pa_i386(uint32_t pde_addr, uint32_t va); //input pde address and virtual address, return physical address
+
 #endif
 
 #endif
