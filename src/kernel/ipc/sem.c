@@ -44,7 +44,7 @@ void lock() {
 //enable intterupt
 void unlock() {
     //intterrupt should be disabled
-    if(++(current->intr_counter) == 0)
+    if(--(current->intr_counter) == 0)
         asm volatile("sti");
     //else do nothing
 

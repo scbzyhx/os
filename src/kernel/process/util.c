@@ -26,7 +26,9 @@ PCB* getFreePCB() {
 void threadWrapper(void *fun) {
     ((FUN)fun)();
     current->state = TASK_DEAD;
-    while(1);
+    while(1){ 
+        ;
+    }// printk("pid=%d,state=%d\n",current->pid,current->state);
 }
 
 PCB*
@@ -57,6 +59,7 @@ create_kthread(void *fun) {
     fr->intr_counter = 0;
     fr->state = TASK_BLOCKED;
     fr->cr3.val = 0;
+    fr->counter = MAX_TIME_SLOT;
 
     list_init(&(fr->msg_list));
     list_init(&(fr->sem_list));
@@ -67,11 +70,12 @@ create_kthread(void *fun) {
     //set the id of process
     lock();
     fr->pid = global_pid++;
+    list_add_after(block.prev,&fr->head);
     unlock();
     
     //put it into the tail of block
-    list_add_after(block.prev,&fr->head);
-    
+    //list_add_after(block.prev,&fr->head);
+    //printk("in create_kthread, pid=%d, state=%d\n",fr->pid, fr->state);
 	return fr;
 }
 void ffun() {
@@ -161,10 +165,11 @@ struct PCB* fetch_pcb(pid_t pid) {
     /*
        lock may be not good
      */
-    
     if (current->pid == pid ) {
         //return current;
-        assert(0);
+        printk("current->pid = pid=%d\n",pid);
+        //assert(0);
+        return current; //I don't know wether it it corret;
         //avoid storm
     }
 

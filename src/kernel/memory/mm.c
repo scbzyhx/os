@@ -125,7 +125,11 @@ static int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
     uint32_t va = va_start & 0xfffffc00; // 11111111 1111111 1111100 00000000
     uint32_t end = va_start + memsz; 
     end = (end & 0xfffffc00) + (0x1 << 12); 
-
+    //test
+    printk("in new_page, start = %x\n",va);
+    printk("in new_page, end = %x\n",end);
+    
+   // return 0;
     for(; va < end; va += PAGE_SIZE) { 
         if(_new_page(pcb,va) != 0) 
             assert(0); // allcoate error, 
@@ -233,9 +237,10 @@ static inline void* va_page(uint32_t n) {
 
 
 int alloc_pages(PCB* pcb, uint32_t va, uint32_t len) {
-     printk("in alloc_pages pid=%d\n",pcb->pid);
+     printk("in alloc_pages pid=%d, state=%d\n",pcb->pid,pcb->state);
      size_t ret = dev_read("mm",pcb->pid,NULL,va, len);
      //must be successful
+     printk("in alloc_pages=%x\n",(pcb->cr3.page_directory_base)<<12);
      assert(ret==0);
 
      return ret;

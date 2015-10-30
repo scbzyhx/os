@@ -23,19 +23,18 @@ void kmem_read_test_thread() {
         printk("%x ",tmp);
     }*/
     /*now test memory allocation*/
-    int tmp = alloc_pages(current,VA,4096);
-    printk("after alloc, tmp=%d\n",tmp);
+    //printk("before alloc: pid=%d,state=%d\n",current->pid,current->state);
+    int tmp;// = alloc_pages(current,VA,4096);
+   // printk("after alloc, tmp=%d\n",tmp);
+    printk("before create_thread\n");
     tmp = create_thread();
-    printk("new pid=%d\n",tmp);
-    Msg m;
-    receive(ANY,&m);
-   
-
-//    while(1) printk("test while\n");
+    printk("tmp=%d\n",tmp);
+    //wakeup(fetch_pcb(tmp));
 }
 
 void init_kmem_read_test(void) {
     PCB *p = create_kthread(kmem_read_test_thread);
+    printk("init_kmem: pid=%d,state=%d\n",p->pid,p->state);
     READ_KMEM = p->pid;
     wakeup(p);
 

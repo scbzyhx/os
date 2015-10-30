@@ -32,13 +32,15 @@ DPL_USER	include/x86/memory.h	10;"	d
 Dev	include/hal.h	/^} Dev;$/;"	t	typeref:struct:Device
 Device	include/hal.h	/^typedef struct Device {$/;"	s
 E	src/kernel/ipc/testmsg.c	/^void E () {$/;"	f
+ELFHeader	boot/boot.h	/^struct ELFHeader {$/;"	s
 ELFHeader	include/elf.h	/^struct ELFHeader {$/;"	s
+ENTRY	src/kernel/drivers/pm/pm.c	58;"	d	file:
 ET_DYN	include/elf.h	62;"	d
 ET_EXEC	include/elf.h	61;"	d
 ET_NONE	include/elf.h	59;"	d
 ET_REL	include/elf.h	60;"	d
 FILE_SIZE	src/kernel/drivers/fs/fs.c	5;"	d	file:
-FILE_SIZE	src/kernel/drivers/pm/pm.c	6;"	d	file:
+FILE_SIZE	src/kernel/drivers/pm/pm.c	8;"	d	file:
 FREE_PAGE	include/mm.h	7;"	d
 FREQ_8253	src/kernel/drivers/timer/timer.c	10;"	d	file:
 FREQ_8253	src/kernel/main.c	19;"	d	file:
@@ -94,6 +96,7 @@ ListHead	include/adt/list.h	/^struct ListHead {$/;"	s
 ListHead	include/adt/list.h	/^typedef struct ListHead ListHead;$/;"	t	typeref:struct:ListHead
 MAX_MSG	src/kernel/ipc/msg.c	3;"	d	file:
 MAX_TIMER	src/kernel/drivers/timer/timer.c	12;"	d	file:
+MAX_TIME_SLOT	include/process.h	10;"	d
 MM_PID	src/kernel/memory/mm.c	/^pid_t MM_PID;$/;"	v
 MSG_HARD_INTR	include/hal.h	10;"	d
 MSG_POOL_SIZE	include/process.h	9;"	d
@@ -105,7 +108,7 @@ Message	include/msg.h	/^typedef struct Message {$/;"	s
 Msg	include/msg.h	/^} Msg;$/;"	t	typeref:struct:Message
 NBUF	src/kernel/ipc/testpv.c	2;"	d	file:
 NEW_PAGE	include/mm.h	6;"	d
-NEW_PROCESS	src/kernel/drivers/pm/pm.c	7;"	d	file:
+NEW_PROCESS	src/kernel/drivers/pm/pm.c	9;"	d	file:
 NEW_TIMER	include/timer.h	4;"	d
 NR_CONS	src/kernel/ipc/testpv.c	4;"	d	file:
 NR_DEV	src/kernel/drivers/hal.c	5;"	d	file:
@@ -148,6 +151,7 @@ PT_NOTE	include/elf.h	69;"	d
 PT_NULL	include/elf.h	66;"	d
 PageDirectoryEntry	include/x86/memory.h	/^typedef union PageDirectoryEntry {$/;"	u
 PageTableEntry	include/x86/memory.h	/^typedef union PageTableEntry {$/;"	u
+ProgramHeader	boot/boot.h	/^struct ProgramHeader {$/;"	s
 ProgramHeader	include/elf.h	/^struct ProgramHeader {$/;"	s
 QEMU	Makefile	/^QEMU    = qemu-system-i386$/;"	m
 QINTR	src/kernel/main.c	/^void QINTR(void) {$/;"	f
@@ -202,6 +206,7 @@ TrapFrame	include/x86/memory.h	/^typedef struct TrapFrame {$/;"	s
 TrapFrame	include/x86/memory.h	/^} TrapFrame;$/;"	t	typeref:struct:TrapFrame
 USER_PAGE_OFFSET	src/kernel/memory/mm.c	9;"	d	file:
 V	src/kernel/ipc/sem.c	/^void V(Sem *s) {$/;"	f
+VA	src/kernel/test/kmem_read_test.c	7;"	d	file:
 WRITEBACK_TIME	src/kernel/drivers/ide/ide.c	7;"	d	file:
 ZERO	src/kernel/drivers/ramdisk/zero.c	/^pid_t ZERO;$/;"	v
 __ASSERT_H__	include/assert.h	2;"	d
@@ -235,6 +240,7 @@ _send	src/kernel/ipc/msg.c	/^void _send(struct PCB *pcb,Msg *msg) {$/;"	f
 accessed	include/x86/memory.h	/^		uint32_t accessed            : 1;$/;"	m	struct:PageDirectoryEntry::__anon4
 accessed	include/x86/memory.h	/^		uint32_t accessed            : 1;$/;"	m	struct:PageTableEntry::__anon5
 add_irq_handle	src/kernel/irq/irq_handle.c	/^add_irq_handle(int irq, void (*func)(void) ) {$/;"	f
+align	boot/boot.h	/^	unsigned int align;$/;"	m	struct:ProgramHeader
 align	include/elf.h	/^	unsigned int align;$/;"	m	struct:ProgramHeader
 align_to_page	include/x86/memory.h	35;"	d
 align_to_page	src/kernel/memory/kvm.c	/^static PDE kpdir[NR_PDE] align_to_page;						\/\/ kernel page directory$/;"	v	file:
@@ -273,10 +279,12 @@ content	src/kernel/drivers/ide/cache.c	/^	uint8_t content[512];$/;"	m	struct:Sec
 cook	src/kernel/drivers/tty/console.c	/^cook(Console *c) {$/;"	f	file:
 copy_from_kernel	src/lib/kcpy.c	/^void copy_from_kernel(PCB* pcb, void* dest, void* src, int len){$/;"	f
 copy_to_kernel	src/lib/kcpy.c	/^void copy_to_kernel(PCB* pcb, void* dest, void* src, int len){$/;"	f
+counter	include/process.h	/^    uint32_t counter;       \/\/for scheduling$/;"	m	struct:PCB
 cr	src/kernel/drivers/tty/console.c	/^cr(Console *c) {$/;"	f	file:
 cr3	include/process.h	/^    CR3   cr3;$/;"	m	struct:PCB
 create_kthread	src/kernel/process/util.c	/^create_kthread(void *fun) {$/;"	f
-create_process	src/kernel/drivers/pm/pm.c	/^void create_process(uint8_t *buf) {$/;"	f
+create_process	src/kernel/drivers/pm/pm.c	/^PCB* create_process(uint8_t *buf) {$/;"	f
+create_thread	src/kernel/drivers/pm/pm.c	/^pid_t create_thread() {$/;"	f
 cs	include/x86/memory.h	/^	uint32_t eip, cs, eflags;							\/\/ execution state saved by hardware$/;"	m	struct:TrapFrame
 ctrl	src/kernel/drivers/tty/keyboard.c	/^static int caps, ctrl, alt, shft;$/;"	v	file:
 current	src/kernel/process/schedule.c	/^PCB idle, *current = &idle;$/;"	v
@@ -309,11 +317,14 @@ ecx	include/x86/memory.h	/^	uint32_t edi, esi, ebp, xxx, ebx, edx, ecx, eax;	\/\
 edi	include/x86/memory.h	/^	uint32_t edi, esi, ebp, xxx, ebx, edx, ecx, eax;	\/\/ GPRs$/;"	m	struct:TrapFrame
 edx	include/x86/memory.h	/^	uint32_t edi, esi, ebp, xxx, ebx, edx, ecx, eax;	\/\/ GPRs$/;"	m	struct:TrapFrame
 eflags	include/x86/memory.h	/^	uint32_t eip, cs, eflags;							\/\/ execution state saved by hardware$/;"	m	struct:TrapFrame
+ehsize	boot/boot.h	/^	unsigned short ehsize;$/;"	m	struct:ELFHeader
 ehsize	include/elf.h	/^	unsigned short ehsize;$/;"	m	struct:ELFHeader
 eip	include/x86/memory.h	/^	uint32_t eip, cs, eflags;							\/\/ execution state saved by hardware$/;"	m	struct:TrapFrame
+elf	boot/boot.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
 elf	include/elf.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
 empty	src/kernel/ipc/testpv.c	/^Sem empty,full,mutex_r,mutex_w;$/;"	v
 emulation	include/x86/cpu.h	/^		uint32_t emulation           : 1;$/;"	m	struct:CR0::__anon6
+entry	boot/boot.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
 entry	include/elf.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
 error_code	include/x86/memory.h	/^	uint32_t error_code;								\/\/ error code$/;"	m	struct:TrapFrame
 es	include/x86/memory.h	/^	uint32_t gs, fs, es, ds;							\/\/ data segment registers$/;"	m	struct:TrapFrame
@@ -327,9 +338,12 @@ false	include/const.h	5;"	d
 fetch_pcb	src/kernel/process/util.c	/^struct PCB* fetch_pcb(pid_t pid) {$/;"	f
 ffun	src/kernel/process/util.c	/^void ffun() {$/;"	f
 file	src/kernel/drivers/ramdisk/ram.c	/^static uint8_t file[NR_MAX_FILE][NR_FILE_SIZE] = {$/;"	v	file:
+filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 filesz	include/elf.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 find_free	src/kernel/memory/mm.c	/^static uint32_t find_free(uint32_t *n) {$/;"	f	file:
 find_pos	src/kernel/memory/mm.c	/^static inline void find_pos(uint32_t *bucket, uint32_t *bit, uint32_t n) {$/;"	f	file:
+flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
+flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
 flags	include/elf.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	include/elf.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
 free	src/kernel/process/schedule.c	/^ListHead ready ,block,free;$/;"	v
@@ -372,7 +386,9 @@ ide_intr	src/kernel/drivers/ide/ide.c	/^ide_intr(void) {$/;"	f	file:
 ide_prepare	src/kernel/drivers/ide/disk.c	/^ide_prepare(uint32_t sector) {$/;"	f	file:
 idle	src/kernel/process/schedule.c	/^PCB idle, *current = &idle;$/;"	v
 idt	src/kernel/irq/idt.c	/^static GateDesc idt[NR_IRQ];$/;"	v	file:
+in_byte	boot/boot.h	/^in_byte(short port) {$/;"	f
 in_byte	include/x86/io.h	/^in_byte(uint16_t port) {$/;"	f
+in_long	boot/boot.h	/^in_long(short port) {$/;"	f
 in_long	include/x86/io.h	/^in_long(uint16_t port) {$/;"	f
 init_consl	src/kernel/drivers/tty/console.c	/^init_consl(int tty_index) {$/;"	f	file:
 init_console	src/kernel/drivers/tty/console.c	/^void init_console(void) {$/;"	f
@@ -435,7 +451,9 @@ list_foreach	include/adt/list.h	56;"	d
 list_init	include/adt/list.h	/^list_init(ListHead *list) {$/;"	f
 lock	src/kernel/ipc/sem.c	/^void lock() {$/;"	f
 logo	src/lib/logo.c	/^unsigned char logo[] = {$/;"	v
+machine	boot/boot.h	/^	unsigned short machine;$/;"	m	struct:ELFHeader
 machine	include/elf.h	/^	unsigned short machine;$/;"	m	struct:ELFHeader
+magic	boot/boot.h	/^	unsigned int   magic;$/;"	m	struct:ELFHeader
 magic	include/elf.h	/^	unsigned int   magic;$/;"	m	struct:ELFHeader
 make_invalid_pde	src/kernel/memory/util.c	/^make_invalid_pde(PDE *p) {$/;"	f
 make_invalid_pte	src/kernel/memory/util.c	/^make_invalid_pte(PTE *p) {$/;"	f
@@ -444,6 +462,7 @@ make_pte	src/kernel/memory/util.c	/^make_pte(PTE *p, void *addr) {$/;"	f
 md	src/kernel/drivers/timer/timer.c	/^md(int year, int month) {$/;"	f	file:
 memcpy	src/lib/string.c	/^void memcpy(void *dest, const void *src, size_t size) {$/;"	f
 memset	src/lib/string.c	/^void memset(void *dest, uint8_t data, size_t size) {$/;"	f
+memsz	boot/boot.h	/^	unsigned int memsz;$/;"	m	struct:ProgramHeader
 memsz	include/elf.h	/^	unsigned int memsz;$/;"	m	struct:ProgramHeader
 minute	include/time.h	/^	int hour, minute, second;$/;"	m	struct:Time
 mm_bits	src/kernel/memory/mm.c	/^uint8_t mm_bits[(NR_USER_PAGE >>3)];\/\/ bitmap to manage pages, no need to add one.$/;"	v
@@ -466,6 +485,7 @@ next	src/kernel/drivers/tty/console.c	/^next(Console *c) {$/;"	f	file:
 next	src/kernel/irq/irq_handle.c	/^	struct IRQ_t *next;$/;"	m	struct:IRQ_t	typeref:struct:IRQ_t::IRQ_t	file:
 no_write_through	include/x86/cpu.h	/^		uint32_t no_write_through    : 1;$/;"	m	struct:CR0::__anon6
 numeric_error	include/x86/cpu.h	/^		uint32_t numeric_error       : 1;$/;"	m	struct:CR0::__anon6
+off	boot/boot.h	/^	unsigned int off;$/;"	m	struct:ProgramHeader
 off	include/elf.h	/^	unsigned int off;$/;"	m	struct:ProgramHeader
 off_t	include/types.h	/^typedef          int   off_t;$/;"	t
 offset	include/msg.h	/^            off_t offset;$/;"	m	struct:Message::__anon2::__anon3
@@ -474,6 +494,7 @@ offset_31_16	include/x86/memory.h	/^	uint32_t offset_31_16     : 16;$/;"	m	struc
 operation_size	include/x86/memory.h	/^	uint32_t operation_size      : 1;$/;"	m	struct:SegmentDescriptor
 os_init	src/kernel/main.c	/^os_init(void) {$/;"	f
 os_init_cont	src/kernel/main.c	/^os_init_cont(void) {$/;"	f
+out_byte	boot/boot.h	/^out_byte(short port, char data) {$/;"	f
 out_byte	include/x86/io.h	/^out_byte(uint16_t port, uint8_t data) {$/;"	f
 out_long	include/x86/io.h	/^out_long(uint16_t port, uint32_t data) {$/;"	f
 pa_page	src/kernel/memory/mm.c	/^static inline void* pa_page(uint32_t n) {$/;"	f	file:
@@ -488,6 +509,7 @@ pad1	include/x86/cpu.h	/^		uint32_t pad1                : 1; $/;"	m	struct:CR0::
 pad1	include/x86/cpu.h	/^		uint32_t pad1                : 7;$/;"	m	struct:CR3::__anon7
 pad1	include/x86/memory.h	/^		uint32_t pad1                : 3;$/;"	m	struct:PageTableEntry::__anon5
 pad2	include/x86/cpu.h	/^		uint32_t pad2                : 10;$/;"	m	struct:CR0::__anon6
+paddr	boot/boot.h	/^	unsigned int paddr;$/;"	m	struct:ProgramHeader
 paddr	include/elf.h	/^	unsigned int paddr;$/;"	m	struct:ProgramHeader
 page_cache_disable	include/x86/cpu.h	/^		uint32_t page_cache_disable  : 1;$/;"	m	struct:CR3::__anon7
 page_cache_disable	include/x86/memory.h	/^		uint32_t page_cache_disable  : 1;$/;"	m	struct:PageDirectoryEntry::__anon4
@@ -503,8 +525,11 @@ panic	include/assert.h	8;"	d
 parent	include/process.h	/^    pid_t parent;         \/\/parent process id$/;"	m	struct:PCB
 pcbPool	src/kernel/process/schedule.c	/^PCB pcbPool[PCB_NUM];$/;"	v
 pcb_va_to_pa	src/kernel/memory/util.c	/^uint32_t pcb_va_to_pa(PCB *pcb, uint32_t va) {$/;"	f
+phentsize	boot/boot.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
 phentsize	include/elf.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
+phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
 phnum	include/elf.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
+phoff	boot/boot.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
 phoff	include/elf.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
 pid	include/hal.h	/^	pid_t pid;$/;"	m	struct:Device
 pid	include/process.h	/^    pid_t pid;            \/\/process id$/;"	m	struct:PCB
@@ -572,10 +597,14 @@ set_segment	src/kernel/memory/kvm.c	/^set_segment(SegDesc *ptr, uint32_t pl, uin
 set_trap	src/kernel/irq/idt.c	/^static void set_trap(GateDesc *ptr, uint32_t selector, uint32_t offset, uint32_t dpl) {$/;"	f	file:
 set_tss	src/kernel/memory/kvm.c	/^set_tss(SegDesc *ptr) {$/;"	f	file:
 set_tss_esp0	src/kernel/memory/kvm.c	/^inline void set_tss_esp0(uint32_t esp) {$/;"	f
+shentsize	boot/boot.h	/^	unsigned short shentsize;$/;"	m	struct:ELFHeader
 shentsize	include/elf.h	/^	unsigned short shentsize;$/;"	m	struct:ELFHeader
 shft	src/kernel/drivers/tty/keyboard.c	/^static int caps, ctrl, alt, shft;$/;"	v	file:
+shnum	boot/boot.h	/^	unsigned short shnum;$/;"	m	struct:ELFHeader
 shnum	include/elf.h	/^	unsigned short shnum;$/;"	m	struct:ELFHeader
+shoff	boot/boot.h	/^	unsigned int   shoff;$/;"	m	struct:ELFHeader
 shoff	include/elf.h	/^	unsigned int   shoff;$/;"	m	struct:ELFHeader
+shstrndx	boot/boot.h	/^	unsigned short shstrndx;$/;"	m	struct:ELFHeader
 shstrndx	include/elf.h	/^	unsigned short shstrndx;$/;"	m	struct:ELFHeader
 size	src/kernel/drivers/tty/tty.h	/^	int size, pos;$/;"	m	struct:Console
 size_t	include/types.h	/^typedef          int   size_t;$/;"	t
@@ -615,6 +644,8 @@ tty_idx	src/kernel/drivers/tty/getty.c	/^static int tty_idx = 1;$/;"	v	file:
 ttyd	src/kernel/drivers/tty/tty.c	/^ttyd(void) {$/;"	f	file:
 ttynames	src/kernel/drivers/tty/console.c	/^static const char *ttynames[NR_TTY] = {"tty1", "tty2", "tty3", "tty4"};$/;"	v	file:
 ttys	src/kernel/drivers/tty/console.c	/^Console ttys[NR_TTY];$/;"	v
+type	boot/boot.h	/^	unsigned int type;$/;"	m	struct:ProgramHeader
+type	boot/boot.h	/^	unsigned short type;$/;"	m	struct:ELFHeader
 type	include/elf.h	/^	unsigned int type;$/;"	m	struct:ProgramHeader
 type	include/elf.h	/^	unsigned short type;$/;"	m	struct:ELFHeader
 type	include/msg.h	/^        int type;$/;"	m	union:Message::__anon1
@@ -634,6 +665,7 @@ va_page	src/kernel/memory/mm.c	/^static inline void* va_page(uint32_t n) {$/;"	f
 va_to_pa	include/memory.h	19;"	d
 va_to_pa_i386	src/kernel/memory/util.c	/^uint32_t va_to_pa_i386(uint32_t pde_addr, uint32_t va) {$/;"	f
 va_to_page	src/kernel/memory/mm.c	/^static inline  uint32_t va_to_page(uint32_t va) {$/;"	f	file:
+vaddr	boot/boot.h	/^	unsigned int vaddr;$/;"	m	struct:ProgramHeader
 vaddr	include/elf.h	/^	unsigned int vaddr;$/;"	m	struct:ProgramHeader
 val	include/x86/cpu.h	/^	uint32_t val;$/;"	m	union:CR0
 val	include/x86/cpu.h	/^	uint32_t val;$/;"	m	union:CR3
@@ -641,6 +673,7 @@ val	include/x86/memory.h	/^	uint32_t val;$/;"	m	union:PageDirectoryEntry
 val	include/x86/memory.h	/^	uint32_t val;$/;"	m	union:PageTableEntry
 vbuf	src/kernel/drivers/tty/console.c	/^static uint16_t vbuf[NR_TTY][SCR_W * SCR_H * 2];$/;"	v	file:
 vbuf	src/kernel/drivers/tty/tty.h	/^	uint16_t *vbuf;$/;"	m	struct:Console
+version	boot/boot.h	/^	unsigned int   version;$/;"	m	struct:ELFHeader
 version	include/elf.h	/^	unsigned int   version;$/;"	m	struct:ELFHeader
 vfprintf	src/lib/printk.c	/^void vfprintf(void (*printer)(char), const char *ctl, void **args) {$/;"	f
 vmem	src/kernel/drivers/tty/console.c	/^static uint16_t *vmem = (void*)pa_to_va(0xb8000);$/;"	v	file:

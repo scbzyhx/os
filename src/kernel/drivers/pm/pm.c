@@ -80,7 +80,7 @@ PCB* create_process(uint8_t *buf) {
         //request new page here
         //start= ph->vaddr, len=ph->memsz
         //
-        printk("before alloc pages,and pid=%d\n",pcb->pid);
+        printk("va=%x\n",va);
         ret = alloc_pages(pcb,va,len);
         printk("after alloc pages\n");
         assert(ret == 0);  // must be successful
@@ -90,7 +90,9 @@ PCB* create_process(uint8_t *buf) {
         offset = ph->off;
         for(; va < eva;) {
             pa = pcb_va_to_pa(pcb,va);
+            printk("physical address = %x\n",pa);
             kst = (uint8_t*)pa_to_va(pa); //virtual address
+            printk("virtual  address = %x\n",kst);
             tmpva = va; va = to_next_page(va) < eva ? to_next_page(va) : eva; //when va == ea this loop end
 
             sublen = va - tmpva;

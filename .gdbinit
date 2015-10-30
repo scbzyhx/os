@@ -20,7 +20,7 @@ define hook-stop
 end
 
 echo + target remote localhost:1234\n
-target remote localhost:1234
+target remote 0.0.0.0:1234
 
 # If this fails, it's probably because your GDB doesn't support ELF.
 # Look at the tools page at

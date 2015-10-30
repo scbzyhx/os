@@ -8,13 +8,13 @@ void memcpy(void *, const void *, size_t );
 /*invoked locked
  */
 void _send(struct PCB *pcb,Msg *msg) {
-    lock();
+    //lock();
     Msg *pmsg = NULL;
     ListHead *plist = NULL;
 
     /*pick one struct Msg*/
     if(list_empty(&(pcb->msg_free) )==true) {
-        unlock();
+       // unlock();
         return;
     }
     plist = pcb->msg_free.next;
@@ -27,7 +27,7 @@ void _send(struct PCB *pcb,Msg *msg) {
     list_add_after(pcb->msg_list.prev,&(pmsg->list));
 //    printk("addr of msg=%x\n",&(msg->list));
 //    printk("pcb pid = %x, msg_list addr = %x, next=%x\n",pcb->pid,&pcb->msg_list,pcb->msg_list.next->next);
-    unlock();
+    //unlock();
     return;
 }
 
@@ -65,7 +65,7 @@ void _receive(pid_t src,Msg *msg) {
     
     Msg *pmsg;
     struct ListHead *ptr;
-    lock();
+    //lock();
     if(list_empty(&(current->msg_list))) {
         //printk("empty\n");
         sleep();
@@ -96,12 +96,13 @@ void _receive(pid_t src,Msg *msg) {
                 list_del(ptr);
                 //move to free
                 list_add_after(&(current->msg_free),ptr);
+                //unlock(); //before return ,remember to unlock
                 return;
             }
         }
         sleep();
     }
-    unlock();
+    //unlock();
     
 
 }

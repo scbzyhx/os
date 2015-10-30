@@ -7,6 +7,7 @@
 #define KSTACK 4096
 #define PCB_NUM 64
 #define MSG_POOL_SIZE 10240
+#define MAX_TIME_SLOT 1
 
 enum STATE {
     TASK_EMPTY = 0,  //show an empty slot, put in free4
@@ -31,6 +32,7 @@ typedef struct PCB {
     pid_t pid;            //process id
     pid_t parent;         //parent process id
     CR3   cr3;
+    uint32_t counter;       //for scheduling
 
     struct PCB *ppcb;     //parent process pointer
     struct Message msg_pool[MSG_POOL_SIZE];
