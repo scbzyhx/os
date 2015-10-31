@@ -29,7 +29,7 @@ void kmem_read_test_thread() {
     printk("before create_thread\n");
     tmp = create_thread();
     printk("tmp=%d\n",tmp);
-    //wakeup(fetch_pcb(tmp));
+    wakeup(fetch_pcb(tmp));
 }
 
 void init_kmem_read_test(void) {

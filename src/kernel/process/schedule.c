@@ -48,6 +48,11 @@ schedule(void) {
     //new scheduling here
 //    printk("new scheduler, pid = %d\n",current->pid);
     //printk("new scheduler, state=%d\n",current->state);
+    if(current->pid == 19 ) {
+        struct TrapFrame* tf = (struct TrapFrame*)(current->tf);
+        if(tf->eip != 0x8048081)
+            printk("eip=%x  ",tf->eip);
+    }
     if(current->state == TASK_DEAD) {
         list_add_after(free.prev,&current->head);
         printk("task_dead, pid = %d\n",current->pid);

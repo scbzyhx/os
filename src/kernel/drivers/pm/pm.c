@@ -55,7 +55,7 @@ static inline uint32_t to_next_page(uint32_t addr) {
     return ((addr & 0xfffff000) + 0x00001000);
 
 }
-#define ENTRY 0X8048000
+#define ENTRY 0X8048074
 PCB* create_process(uint8_t *buf) {
     struct ELFHeader *elf = (struct ELFHeader*) buf;
     struct ProgramHeader *ph, *eph;
