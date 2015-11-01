@@ -41,6 +41,7 @@ ET_NONE	include/elf.h	59;"	d
 ET_REL	include/elf.h	60;"	d
 FILE_SIZE	src/kernel/drivers/fs/fs.c	5;"	d	file:
 FILE_SIZE	src/kernel/drivers/pm/pm.c	8;"	d	file:
+FM	include/services.h	4;"	d
 FREE_PAGE	include/mm.h	7;"	d
 FREQ_8253	src/kernel/drivers/timer/timer.c	10;"	d	file:
 FREQ_8253	src/kernel/main.c	19;"	d	file:
@@ -138,6 +139,7 @@ PCB_NUM	include/process.h	8;"	d
 PDE	include/x86/memory.h	/^} PDE;$/;"	t	typeref:union:PageDirectoryEntry
 PD_SIZE	include/x86/memory.h	31;"	d
 PHY_MEM	include/memory.h	29;"	d
+PM	include/services.h	5;"	d
 PM	src/kernel/drivers/pm/pm.c	/^pid_t PM;$/;"	v
 PORT_PIC_MASTER	src/kernel/irq/i8259.c	3;"	d	file:
 PORT_PIC_SLAVE	src/kernel/irq/i8259.c	4;"	d	file:
@@ -181,6 +183,11 @@ SELECTOR_USER	include/x86/memory.h	25;"	d
 SERIAL_PORT	src/lib/serial.c	3;"	d	file:
 SFILES	Makefile	/^SFILES  = $(shell find src\/ -name "*.S")$/;"	m
 STATE	include/process.h	/^enum STATE {$/;"	g
+SYS_EXCE	include/do_syscall.h	7;"	d
+SYS_FORK	include/do_syscall.h	8;"	d
+SYS_READ	include/do_syscall.h	5;"	d
+SYS_SCHEDULE	include/do_syscall.h	9;"	d
+SYS_WRITE	include/do_syscall.h	6;"	d
 SectorCache	src/kernel/drivers/ide/cache.c	/^struct SectorCache {$/;"	s	file:
 SegDesc	include/x86/memory.h	/^} SegDesc;$/;"	t	typeref:struct:SegmentDescriptor
 SegmentDescriptor	include/x86/memory.h	/^typedef struct SegmentDescriptor {$/;"	s
@@ -212,6 +219,7 @@ ZERO	src/kernel/drivers/ramdisk/zero.c	/^pid_t ZERO;$/;"	v
 __ASSERT_H__	include/assert.h	2;"	d
 __COMMON_H__	include/common.h	2;"	d
 __CONST_H__	include/const.h	2;"	d
+__DO_SYSCALL_H_	include/do_syscall.h	2;"	d
 __ELF_H_	include/elf.h	2;"	d
 __FS_H_	include/fs.h	2;"	d
 __HAL_H__	include/hal.h	2;"	d
@@ -224,6 +232,7 @@ __MM_H_	include/mm.h	2;"	d
 __MSG_H__	include/msg.h	2;"	d
 __PROCESS_H__	include/process.h	2;"	d
 __SEMAPHORE_H__	include/sem.h	2;"	d
+__SERVICES_H_	include/services.h	2;"	d
 __STRING_H__	include/string.h	2;"	d
 __TERM_H__	src/kernel/drivers/tty/term.h	2;"	d
 __TIMER_H__	include/timer.h	2;"	d
@@ -306,6 +315,7 @@ disk	src/kernel/drivers/ramdisk/ram.c	/^static uint8_t *disk = (void*)file;$/;"	
 disk_do_read	src/kernel/drivers/ide/disk.c	/^disk_do_read(void *buf, uint32_t sector) {$/;"	f
 disk_do_write	src/kernel/drivers/ide/disk.c	/^disk_do_write(void *buf, uint32_t sector) {$/;"	f
 do_read	src/kernel/drivers/fs/fs.c	/^size_t do_read(int file_name, uint8_t *buf, off_t offset, size_t len) {$/;"	f
+do_syscall	src/kernel/syscall/do_syscall.c	/^void do_syscall(TrapFrame *tf) {$/;"	f
 dont_care	include/x86/memory.h	/^	uint8_t dont_care[88];$/;"	m	struct:TSS
 draw	src/kernel/drivers/tty/console.c	/^draw(char ch) {$/;"	f	file:
 draw2	src/kernel/drivers/tty/banner.c	/^draw2(char **p, int q) {$/;"	f	file:
@@ -427,6 +437,7 @@ issue_read	src/kernel/drivers/ide/disk.c	/^issue_read() {$/;"	f	file:
 issue_write	src/kernel/drivers/ide/disk.c	/^issue_write() {$/;"	f	file:
 itoa	src/lib/string.c	/^char *itoa(int a) {$/;"	f
 jiffy	src/kernel/drivers/timer/timer.c	/^static long jiffy = 0;$/;"	v	file:
+just_for_test	src/kernel/process/schedule.c	/^void just_for_test(){};$/;"	f
 kcr3	src/kernel/memory/kvm.c	/^static CR3 kcr3;											\/\/ kernel CR3$/;"	v	file:
 keychar	src/kernel/drivers/tty/keyboard.c	/^static int keychar[2][128] = {$/;"	v	file:
 kmem_read_test_thread	src/kernel/test/kmem_read_test.c	/^void kmem_read_test_thread() {$/;"	f
@@ -622,6 +633,7 @@ strcpy	src/lib/string.c	/^void strcpy(char *d, const char *s) {$/;"	f
 strcpy_from_kernel	src/lib/kcpy.c	/^void strcpy_from_kernel(PCB* pcb, char* dest, char* src){$/;"	f
 strcpy_to_kernel	src/lib/kcpy.c	/^void strcpy_to_kernel(PCB* pcb, char* dest, char* src){$/;"	f
 strlen	src/lib/string.c	/^size_t strlen(const char *str) {$/;"	f
+syscall	src/kernel/syscall/syscall.c	/^syscall(int id,...) {$/;"	f
 system	include/x86/memory.h	/^	uint32_t system           : 1;$/;"	m	struct:GateDescriptor
 task_switched	include/x86/cpu.h	/^		uint32_t task_switched       : 1;$/;"	m	struct:CR0::__anon6
 test_consumer	src/kernel/ipc/testpv.c	/^void test_consumer(void) {$/;"	f

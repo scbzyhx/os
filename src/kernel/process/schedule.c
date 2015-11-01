@@ -19,7 +19,7 @@ pid_t global_pid = 5; //idle.id = 0
 /*
    schedule is invoked every IDT
  */
-void just_for_test(){};
+void inline set_tss_esp0(uint32_t);
 void
 schedule(void) {
 	/* implement process/thread schedule here */
@@ -48,11 +48,6 @@ schedule(void) {
     //new scheduling here
 //    printk("new scheduler, pid = %d\n",current->pid);
     //printk("new scheduler, state=%d\n",current->state);
-    if(current->pid == 19 ) {
-        struct TrapFrame* tf = (struct TrapFrame*)(current->tf);
-        if(tf->eip != 0x8048081)
-            printk("eip=%x  ",tf->eip);
-    }
     if(current->state == TASK_DEAD) {
         list_add_after(free.prev,&current->head);
         printk("task_dead, pid = %d\n",current->pid);
@@ -92,9 +87,7 @@ schedule(void) {
     }else {
         write_cr3(&(current->cr3));
     }
-    if(current->pid == 19){
-        just_for_test();
-    }
+    set_tss_esp0((uint32_t)current->tf);
 
   //  printk("after new scheduler, pid = %d\n",current->pid);
    // printk("after new scheduler, state=%d\n",current->state);

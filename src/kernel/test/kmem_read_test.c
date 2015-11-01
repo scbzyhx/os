@@ -27,7 +27,8 @@ void kmem_read_test_thread() {
     int tmp;// = alloc_pages(current,VA,4096);
    // printk("after alloc, tmp=%d\n",tmp);
     printk("before create_thread\n");
-    tmp = create_thread();
+    uint32_t file[] = {3,0};
+    tmp = create_thread(file);
     printk("tmp=%d\n",tmp);
     wakeup(fetch_pcb(tmp));
 }

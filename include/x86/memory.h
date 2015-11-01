@@ -24,6 +24,11 @@
 #define SELECTOR_KERNEL(s)		( (s << 3) | DPL_KERNEL )
 #define SELECTOR_USER(s)		( (s << 3) | DPL_USER )
 
+/*descript user tack, defined by yhx*/
+#define USER_STACK_LEN 4096
+#define USER_STACK_END 0xbfffffff
+#define USER_STACK_BEGIN (USER_STACK_END - USER_STACK_LEN + 1)
+
 /* 32bit x86 uses 4KB page size */
 #define PAGE_SIZE					4096
 #define NR_PDE						1024

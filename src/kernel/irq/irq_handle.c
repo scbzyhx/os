@@ -36,7 +36,7 @@ add_irq_handle(int irq, void (*func)(void) ) {
 	handles[irq] = ptr;
 }
 void schedule();
-
+void do_syscall(TrapFrame *tf);
 void irq_handle(TrapFrame *tf) {
 	int irq = tf->irq;
 
@@ -46,13 +46,22 @@ void irq_handle(TrapFrame *tf) {
 
 	if (irq < 1000) {
 		extern uint8_t logo[];
-		if(irq == 14) {
-		    printk("eip = %x\n",tf->eip);
-		    printk("current->cr3 = %x\n",current->cr3.val);
+		switch(irq) {
+            case 0x80:
+                do_syscall(tf);
+                break;
+            case 0x14:
+		        printk("irq = 14,eip = %x\n",tf->eip);
+		        printk("irq=14, current->cr3 = %x\n",current->cr3.val);
+		        break;
+
+            default:
+		        panic("Unexpected exception #%d\n\33[1;31mHint: The machine is always right! For more details about exception #%d, see\n%s\n\33[0m", irq, irq, logo);
+                break;
         }
 		//printk("%x\n",irq);
-		if(irq != 0x80)
-		panic("Unexpected exception #%d\n\33[1;31mHint: The machine is always right! For more details about exception #%d, see\n%s\n\33[0m", irq, irq, logo);
+		//if(irq != 0x80)
+		//panic("Unexpected exception #%d\n\33[1;31mHint: The machine is always right! For more details about exception #%d, see\n%s\n\33[0m", irq, irq, logo);
 	} else if (irq >= 1000) {
 		/* The following code is to handle external interrupts.
 		 * You will use this code in Lab2.  */

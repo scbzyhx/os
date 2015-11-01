@@ -34,7 +34,9 @@ void pm_thread() {
 		} else if (m.type == NEW_PROCESS) {
 
             //TODO: only first file here, I should change it 
-            size_t sz =  do_read(0, buf, 0, FILE_SIZE);
+            uint32_t *file_name_buf = (uint32_t*)m.buf;
+
+            size_t sz =  do_read(file_name_buf[0], buf, 0, FILE_SIZE);
             assert(sz == FILE_SIZE);
             pcb = create_process(buf);
 			m.ret = pcb->pid;
@@ -55,7 +57,10 @@ static inline uint32_t to_next_page(uint32_t addr) {
     return ((addr & 0xfffff000) + 0x00001000);
 
 }
-#define ENTRY 0X8048074
+static int alloc_user_stack(PCB*pcb) {
+    return alloc_pages(pcb,USER_STACK_BEGIN,USER_STACK_LEN);
+}
+//#define ENTRY 0X8048074
 PCB* create_process(uint8_t *buf) {
     struct ELFHeader *elf = (struct ELFHeader*) buf;
     struct ProgramHeader *ph, *eph;
@@ -85,6 +90,10 @@ PCB* create_process(uint8_t *buf) {
         printk("after alloc pages\n");
         assert(ret == 0);  // must be successful
         printk("after alloc pages and assertion\n");
+        printk("before alloc stack\n");
+        ret = alloc_user_stack(pcb);
+        assert(ret==0);
+        printk("after alloc user stack\n");
         
         //attention: virtual adrress to physical address
         offset = ph->off;
@@ -102,12 +111,24 @@ PCB* create_process(uint8_t *buf) {
         }
 
     }
-    ((struct TrapFrame*)(pcb->tf))->eip = ENTRY;
+    struct TrapFrame* tf = ((struct TrapFrame*)(pcb->tf));
+    tf->eip = elf->entry;//ENTRY;
+    //set user stack here
+    tf->cs = SELECTOR_USER(SEG_USER_CODE);
+    tf->ds = SELECTOR_USER(SEG_USER_DATA);
+
+    tf->irq = 1000;
+
+    tf->ss = SELECTOR_USER(SEG_USER_DATA);
+    tf->esp = USER_STACK_END;
+    //should I set tf->ebp?
+   
+    
     return pcb;
 
 }
 
-pid_t create_thread() {
-    //TODO: buf store filename, 
-    return dev_write("pm",0,NULL,0,0);
+pid_t create_thread(void* file_name_buf) {
+    //TODO: buf store filename,
+    return dev_write("pm",current->pid,file_name_buf,0,0);
 }

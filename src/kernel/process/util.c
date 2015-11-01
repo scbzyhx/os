@@ -1,4 +1,6 @@
 #include "kernel.h"
+#include "do_syscall.h"
+
 typedef void(*FUN)(void);
 
 void init_msg_pool(struct PCB *pcb) { 
@@ -98,12 +100,9 @@ init_proc() {
     list_init(&block);
     list_init(&ready);
     //printk("%x\n",ready.next);
-    //printk("%x\n",&ready);
-    //ready.prev = ready.next = &ready;
-    //block.prev = block.next = &block;
-    //free is more
+    //printk("%x\n",&ready); // ready.prev = ready.next = &ready; //block.prev = block.next = &block; //free is more 
     ListHead *p;
-    int i = 0;
+    int i = 0; 
     for(;i<PCB_NUM;i++)
     {
         p = &pcbPool[i].head; 
@@ -128,7 +127,7 @@ init_proc() {
 
 void sleep(void) {
     current->state = TASK_BLOCKED;
-    asm volatile("int $0x80");
+    asm volatile("int $0x80": : "a"(SYS_SCHEDULE));
 }
 void wakeup(PCB *p) {
     //p->state = TASK_READ;
@@ -153,7 +152,6 @@ void set_kthread_state(PCB *p, enum STATE state) {
         assert(0);
     }
 }
-
 
 //get PCB struct through pid_t
 //invoke with lock
