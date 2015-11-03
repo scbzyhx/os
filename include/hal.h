@@ -21,7 +21,8 @@ typedef struct Device {
 
 size_t dev_read(const char *dev_name, pid_t reqst_pid, void *buf ,off_t offset, size_t len);
 size_t dev_write(const char *dev_name, pid_t reqst_pid, void *buf ,off_t offset, size_t len);
-
+size_t dev_rw(const char *dev_name, int type, pid_t reqst_pid, void *buf, off_t offset, size_t len);
+size_t msg_rw(const char *dev_name, int type, int *buf);
 void hal_register(const char *name, pid_t pid, int dev_id);
 void hal_get_id(const char *name, pid_t *pid, int *dev_id);
 void hal_list(void);

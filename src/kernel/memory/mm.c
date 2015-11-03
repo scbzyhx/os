@@ -4,6 +4,8 @@
 #include "string.h"
 #include "memory.h"
 
+#define COPY_VM 3
+
 #define NR_PAGE (PHY_MEM / PAGE_SIZE)
 #define NR_KERNEL_PAGE (KMEM /PAGE_SIZE) //2^12
 #define USER_PAGE_OFFSET NR_KERNEL_PAGE
@@ -21,7 +23,7 @@ static void set(uint32_t);
 static inline  uint32_t va_to_page(uint32_t va) {
     return (va>>12);
 }
-
+static int _copy_vm_space(PCB* new, PCB *old);
 void init_mm(void) {
 
     PCB *p = create_kthread(mm_thread);
@@ -140,7 +142,7 @@ static int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
 
 static void mm_thread(void) {
 	static Msg m;
-	PCB *pcb = NULL;
+	
 
 	while (true) {
 		receive(ANY, &m);
@@ -148,6 +150,7 @@ static void mm_thread(void) {
 		if (m.src == MSG_HARD_INTR) {
 		    //do nothting
 		} else if (m.type == NEW_PAGE) { //infact DEV_READ
+            PCB *pcb = NULL;
 		    printk("in mm_thread, m.req_pid=%d\n",m.req_pid);
 			pcb = fetch_pcb(m.req_pid); //req_pid store pid of thread, equal to source or not
 			printk("req_pid=%d\n",pcb->pid);
@@ -164,7 +167,15 @@ static void mm_thread(void) {
 			m.dest = m.src;
 			m.src = MM_PID;
 			send(m.dest, &m);
-		}
+		}else if(m.type == COPY_VM) {
+		    PCB *new = fetch_pcb(m.i[0]);
+		    PCB *old = fetch_pcb(m.i[1]);
+		    m.ret = _copy_vm_space(new,old);
+		    m.dest = m.src;
+		    m.src = MM_PID;
+		    send(m.dest,&m);
+
+        }
 		else {
 			assert(0);
 		}
@@ -233,6 +244,81 @@ static inline void* pa_page(uint32_t n) {
 }
 static inline void* va_page(uint32_t n) {
     return (void*)(KMEM + n*PAGE_SIZE + KOFFSET);
+}
+/*errors is not handled properly*/
+static int _copy_vm_space(PCB *new, PCB *old) {
+    assert(new->cr3.val == 0);
+    assert(old->cr3.val != 0);
+
+    PDE *ppde_old, *ppde_new, *vpde_old, *vpde_new;
+    PTE *ppte_old, *ppte_new, *vpte_old, *vpte_new;
+    void *pa, *va, *ovptr;
+    uint32_t n;
+    if(find_free(&n) != 0)
+        return -1;
+    //physical addr
+    ppde_new = (PDE*)pa_page(n);
+    new->cr3.page_directory_base = ((uint32_t)ppde_new)>>12;
+    set(n);
+
+    vpde_new = (PDE*)pa_to_va(ppde_new);
+
+    ppde_old = (PDE*)((uint32_t)(old->cr3.page_directory_base)<<12);
+    vpde_old = (PDE*)pa_to_va(ppde_old);
+
+    
+    int i = 0, j = 0;
+    for(i=0; i<NR_PDE; ++i) {
+        if(is_invalid_pde(&vpde_old[i])) {
+            make_invalid_pde(&vpde_new[i]);
+            continue;
+        }
+        /*need a page*/
+        if(find_free(&n) !=0 )
+            return -1;
+        //deeper copy
+        ppte_old = (PTE*)(((uint32_t)vpde_old[i].page_frame) << 12);
+        vpte_old = (PTE*)pa_to_va(ppte_old);
+
+        ppte_new = (PTE*)pa_page(n);
+        vpte_new = (PTE*)pa_to_va(ppte_new);
+
+        make_pde(&vpde_new[i],ppte_old);
+        set(n);
+        
+        for(j=0; j<NR_PTE; ++j) {
+            
+            if( is_invalid_pte(&vpte_old[j])) {
+                make_invalid_pte(&vpte_new[j]);
+                continue;
+            }
+
+            //
+            if(find_free(&n) != 0)
+                return -1;
+
+            pa = (PDE*)pa_page(n);
+            va = (PDE*)pa_to_va(pa);
+            make_pte(&vpte_new[j],pa);
+            set(n);
+
+            ovptr = pa_to_va(vpte_old[j].page_frame<<12);
+            memcpy(va,ovptr,PAGE_SIZE);
+
+
+        }
+
+    }
+
+    return 0;
+}
+
+
+int copy_vm_space(PCB *new, PCB *old) {
+    int buf[5] = {new->pid,old->pid};
+    size_t ret = msg_rw("mm", COPY_VM, buf);
+    assert(ret == 0);
+    return ret;
 }
 
 

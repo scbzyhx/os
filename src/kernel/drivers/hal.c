@@ -68,7 +68,7 @@ void hal_list(void) {
 	unlock();
 }
 
-static size_t
+size_t
 dev_rw(const char *dev_name, int type, pid_t reqst_pid, void *buf, off_t offset, size_t len) {
 	Dev *dev = hal_get(dev_name);
 	assert(dev != NULL);
@@ -85,6 +85,19 @@ dev_rw(const char *dev_name, int type, pid_t reqst_pid, void *buf, off_t offset,
 	receive(dev->pid, &m);
 
 	return m.ret;
+}
+size_t msg_rw(const char *dev_name, int type, int *buf) {
+    Dev *dev = hal_get(dev_name);
+    assert(dev != NULL);
+
+    Msg m;
+    m.src = current->pid;
+    m.type = type;
+    memcpy(m.i, buf,sizeof(m.i));
+    send(dev->pid, &m);
+    receive(dev->pid, &m);
+    
+    return m.ret;
 }
 
 size_t

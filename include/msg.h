@@ -29,4 +29,7 @@ void send(pid_t, Msg *);
 //synchronized
 void receive(pid_t,Msg *);
 void printk_msg(Msg*);
+Msg* get_free_msg(struct ListHead* lh);
+void insert_msg(struct ListHead *lh, Msg *msg);
+
 #endif

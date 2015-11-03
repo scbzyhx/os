@@ -8,6 +8,8 @@
 #define SYS_FORK             4
 #define SYS_SCHEDULE         5
 
+#define SYS_EXIT             6
+#define SYS_WAITPID          7
 
 void do_syscall(TrapFrame*);
 

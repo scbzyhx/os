@@ -117,3 +117,15 @@ void print_msg(Msg *msg) {
 //    printk("type or ret = %d\n",msg->type);
 //    printk("union array i is %x, %x, %x, %x, %x\n",msg->i[0],msg->i[1],msg->i[2],msg->i[3],msg->i[4]);
 }
+Msg* get_free_msg(struct ListHead* lh) {
+    struct ListHead *ptr;
+    if(lh->next == lh) return NULL; //no more free msg
+    ptr = lh->next;
+    list_del(ptr);
+    return list_entry(ptr,Msg,list);
+}
+void insert_msg(struct ListHead *lh, Msg *msg) {
+    list_add_after(lh->prev,&msg->list);
+    return;
+
+}

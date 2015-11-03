@@ -15,7 +15,8 @@ void make_invalid_pte(PTE *);
 void make_pde(PDE *, void *);
 void make_pte(PTE *, void *);
 uint32_t pcb_va_to_pa(PCB* pcb, uint32_t va);
-
+bool is_invalid_pte(PTE *);
+bool is_invalid_pde(PDE *);
 #define va_to_pa(addr) \
 	((void*)(((uint32_t)(addr)) - KOFFSET))
 

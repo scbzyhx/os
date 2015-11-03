@@ -8,7 +8,12 @@ void
 make_invalid_pte(PTE *p) {
 	p->val = 0;
 }
-
+bool is_invalid_pde(PDE *p) {
+    return (p->val == 0);
+}
+bool is_invalid_pte(PTE *p) {
+    return (p->val == 0);
+}
 /* For simplicity, we make all pages readable and writable for all ring 3 processes.
  * In Lab3, you may set different flags for different pages to perform the whole 
  * page level protection. */

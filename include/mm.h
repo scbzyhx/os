@@ -8,5 +8,5 @@
 
 int alloc_pages(PCB *pcb, uint32_t va, uint32_t len);
 int free_pages(PCB *pcb, uint32_t va, uint32_t len);
-
+int copy_vm_space(PCB *, PCB *);
 #endif

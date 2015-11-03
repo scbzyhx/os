@@ -4,12 +4,14 @@
 #include "mm.h"
 #include "fs.h"
 #include "string.h"
+#include "pm.h"
+
 
 #define FILE_SIZE (128*1024)
-#define NEW_PROCESS DEV_WRITE
 
 pid_t PM;
 static void  pm_thread();
+static pid_t _do_fork(PCB*pcb);
 
 static uint8_t buf[FILE_SIZE];
 
@@ -44,8 +46,18 @@ void pm_thread() {
 			m.src = PM;
 			send(m.dest, &m);
 
-		} else if (m.type == 0) {
-		    assert(0);
+		} else if (m.type == FORK) {
+		    PCB *old = fetch_pcb(m.req_pid);
+		    pid_t new_pid = _do_fork(old);
+		    m.ret = new_pid;
+		    m.dest = m.src;
+		    m.src = PM;
+		    send(m.dest,&m);
+		    //for child process
+		    m.ret = 0;
+		    m.dest = new_pid; //send to new_pid
+		    m.src = PM;
+		    send(m.dest,&m);
         }
 		else {
 			assert(0);
@@ -128,7 +140,56 @@ PCB* create_process(uint8_t *buf) {
 
 }
 
-pid_t create_thread(void* file_name_buf) {
-    //TODO: buf store filename,
-    return dev_write("pm",current->pid,file_name_buf,0,0);
+
+static pid_t _do_fork(PCB* pcb) {
+    PCB *new_pcb = create_kthread(NULL);
+    //Sem *old_sem,*new_sem;
+    //Msg *old_msg,*new_msg;
+    //struct ListHead *ptr;
+    
+    //head, no
+    /*the guide said that all semaphore is empty and msg queue is also empty for a user process.
+      So we do nothing here
+     */
+    //sem_list, copy
+    
+    //:msg_list copy
+
+    //:msg_free, copy
+    //state, block OK,
+
+    new_pcb->intr_counter = pcb->intr_counter;
+    //pid
+    new_pcb->parent = pcb->pid;
+    //TODO:CR3
+    if(copy_vm_space(new_pcb,pcb) != 0 )
+        return -1; //error
+
+    new_pcb->counter = pcb->counter;
+
+    new_pcb->ppcb = pcb;
+    //msg_pool, no nead
+    //kstack copy
+    memcpy(new_pcb->kstack,pcb->kstack,sizeof(pcb->kstack)); //complete copying context
+    new_pcb->tf = new_pcb->kstack + ((char*)(pcb->tf) - pcb->kstack); //relative offset
+
+    //set ebp of each trapframe
+    struct TrapFrame *otf = (struct TrapFrame*) pcb->tf;
+    struct TrapFrame *ntf = (struct TrapFrame*) new_pcb->tf;
+    uint32_t *nebp, *oebp, offset;
+
+    oebp = &otf->ebp;
+    nebp = &ntf->ebp;
+
+    while(*oebp > KOFFSET /*Condition: util  to user space stack*/) {
+        offset =  *oebp - (uint32_t)pcb->kstack;
+        *nebp = (uint32_t)(new_pcb->kstack) + offset;
+
+        oebp = (uint32_t*)*oebp;
+        nebp = (uint32_t*)*nebp;
+    }
+
+
+    return new_pcb->pid;
+
 }
