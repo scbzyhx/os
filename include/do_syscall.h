@@ -11,6 +11,9 @@
 #define SYS_EXIT             6
 #define SYS_WAITPID          7
 
+#define SYS_PUTS             8
+#define SYS_GETPID           9
+
 void do_syscall(TrapFrame*);
 
 

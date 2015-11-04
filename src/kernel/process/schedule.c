@@ -46,7 +46,7 @@ schedule(void) {
     }
     */
     //new scheduling here
-//    printk("new scheduler, pid = %d\n",current->pid);
+    //printk("new scheduler, pid = %d\n",current->pid);
     //printk("new scheduler, state=%d\n",current->state);
     if(current->state == TASK_DEAD) {
         list_add_after(free.prev,&current->head);
@@ -89,7 +89,7 @@ schedule(void) {
     }
     set_tss_esp0((uint32_t)current->tf);
 
-  //  printk("after new scheduler, pid = %d\n",current->pid);
+    //printk("after new scheduler, pid = %d\n",current->pid);
    // printk("after new scheduler, state=%d\n",current->state);
 
 

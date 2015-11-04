@@ -7,13 +7,17 @@
 A	src/kernel/ipc/testmsg.c	/^void A () { $/;"	f
 ANY	include/msg.h	6;"	d
 ASFLAGS	Makefile	/^ASFLAGS = -m32 -MD -I.\/include$/;"	m
+ASFLAGS	syscall/Makefile	/^ASFLAGS = -m32 -MD -I.\/include$/;"	m
 B	src/kernel/ipc/testmsg.c	/^void B () { $/;"	f
 C	src/kernel/ipc/testmsg.c	/^void C () { $/;"	f
 CBUF_SZ	src/kernel/drivers/tty/term.h	35;"	d
 CBUF_SZ	src/kernel/drivers/tty/tty.h	8;"	d
 CC	Makefile	/^CC      = gcc$/;"	m
+CC	syscall/Makefile	/^CC      = gcc$/;"	m
 CFILES	Makefile	/^CFILES  = $(shell find src\/ -name "*.c")$/;"	m
+CFILES	syscall/Makefile	/^CFILES  = $(shell find . -name "*.c")$/;"	m
 CFLAGS	Makefile	/^CFLAGS  = -m32 -static -ggdb -MD -Wall -Werror -I.\/include -O2 \\$/;"	m
+CFLAGS	syscall/Makefile	/^CFLAGS  = -m32 -static -ggdb -MD -Wall -Werror -I..\/include -O2 \\$/;"	m
 COPY_VM	src/kernel/memory/mm.c	7;"	d	file:
 CR0	include/x86/cpu.h	/^typedef union CR0 {$/;"	u
 CR0	include/x86/cpu.h	/^} CR0;$/;"	t	typeref:union:CR0
@@ -60,6 +64,7 @@ IDE_PORT_BASE	src/kernel/drivers/ide/disk.c	8;"	d	file:
 IDE_PORT_CTRL	src/kernel/drivers/ide/disk.c	7;"	d	file:
 IDE_READY	src/kernel/drivers/ide/ide.h	4;"	d
 IDE_WRITEBACK	src/kernel/drivers/ide/ide.h	5;"	d
+IF_FLAG	src/kernel/ipc/sem.c	42;"	d	file:
 INTERRUPT_GATE_32	src/kernel/irq/idt.c	4;"	d	file:
 IRQ_SLAVE	src/kernel/irq/i8259.c	5;"	d	file:
 IRQ_t	src/kernel/irq/irq_handle.c	/^struct IRQ_t {$/;"	s	file:
@@ -93,7 +98,9 @@ K_RSHFT	src/kernel/drivers/tty/term.h	6;"	d
 LBUF_SZ	src/kernel/drivers/tty/term.h	34;"	d
 LBUF_SZ	src/kernel/drivers/tty/tty.h	7;"	d
 LD	Makefile	/^LD      = ld$/;"	m
+LD	syscall/Makefile	/^LD      = ld$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS = -melf_i386$/;"	m
+LDFLAGS	syscall/Makefile	/^LDFLAGS = -melf_i386$/;"	m
 ListHead	include/adt/list.h	/^struct ListHead {$/;"	s
 ListHead	include/adt/list.h	/^typedef struct ListHead ListHead;$/;"	t	typeref:struct:ListHead
 MAX_MSG	src/kernel/ipc/msg.c	3;"	d	file:
@@ -115,12 +122,12 @@ NEW_TIMER	include/timer.h	4;"	d
 NR_CONS	src/kernel/ipc/testpv.c	4;"	d	file:
 NR_DEV	src/kernel/drivers/hal.c	5;"	d	file:
 NR_FILE	src/kernel/drivers/fs/fs.c	4;"	d	file:
-NR_FILE_SIZE	src/kernel/drivers/ramdisk/ram.c	6;"	d	file:
+NR_FILE_SIZE	src/kernel/drivers/ramdisk/ram.h	4;"	d
 NR_HARD_INTR	src/kernel/irq/irq_handle.c	6;"	d	file:
 NR_IRQ	include/x86/cpu.h	112;"	d
 NR_IRQ_HANDLE	src/kernel/irq/irq_handle.c	3;"	d	file:
 NR_KERNEL_PAGE	src/kernel/memory/mm.c	10;"	d	file:
-NR_MAX_FILE	src/kernel/drivers/ramdisk/ram.c	5;"	d	file:
+NR_MAX_FILE	src/kernel/drivers/ramdisk/ram.h	3;"	d
 NR_PAGE	src/kernel/memory/mm.c	9;"	d	file:
 NR_PDE	include/x86/memory.h	34;"	d
 NR_PROD	src/kernel/ipc/testpv.c	3;"	d	file:
@@ -131,6 +138,7 @@ NR_TTY	src/kernel/drivers/tty/tty.h	4;"	d
 NR_USER_PAGE	src/kernel/memory/mm.c	12;"	d	file:
 NULL	include/const.h	7;"	d
 OBJS	Makefile	/^OBJS    = $(CFILES:.c=.o) $(SFILES:.S=.o)$/;"	m
+OBJS	syscall/Makefile	/^OBJS    = $(CFILES:.c=.o) $(SFILES:.S=.o)$/;"	m
 ONE_SECOND	include/timer.h	6;"	d
 P	src/kernel/ipc/sem.c	/^void P(Sem *s) {$/;"	f
 PAGE_SIZE	include/x86/memory.h	33;"	d
@@ -183,10 +191,12 @@ SELECTOR_KERNEL	include/x86/memory.h	24;"	d
 SELECTOR_USER	include/x86/memory.h	25;"	d
 SERIAL_PORT	src/lib/serial.c	3;"	d	file:
 SFILES	Makefile	/^SFILES  = $(shell find src\/ -name "*.S")$/;"	m
+SFILES	syscall/Makefile	/^SFILES  = $(shell find . -name "*.S")$/;"	m
 STATE	include/process.h	/^enum STATE {$/;"	g
 SYS_EXEC	include/do_syscall.h	7;"	d
 SYS_EXIT	include/do_syscall.h	11;"	d
 SYS_FORK	include/do_syscall.h	8;"	d
+SYS_PUTS	include/do_syscall.h	14;"	d
 SYS_READ	include/do_syscall.h	5;"	d
 SYS_SCHEDULE	include/do_syscall.h	9;"	d
 SYS_WAITPID	include/do_syscall.h	12;"	d
@@ -350,6 +360,7 @@ elf	boot/boot.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
 elf	include/elf.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
 empty	src/kernel/ipc/testpv.c	/^Sem empty,full,mutex_r,mutex_w;$/;"	v
 emulation	include/x86/cpu.h	/^		uint32_t emulation           : 1;$/;"	m	struct:CR0::__anon6
+enabled	include/process.h	/^    uint32_t enabled;    \/\/store interupt state before first lock$/;"	m	struct:PCB
 entry	boot/boot.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
 entry	include/elf.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
 error_code	include/x86/memory.h	/^	uint32_t error_code;								\/\/ error code$/;"	m	struct:TrapFrame
@@ -363,7 +374,7 @@ f	src/kernel/ipc/testpv.c	/^int buf[NBUF],f=0,r=0,g=1;$/;"	v
 false	include/const.h	5;"	d
 fetch_pcb	src/kernel/process/util.c	/^struct PCB* fetch_pcb(pid_t pid) {$/;"	f
 ffun	src/kernel/process/util.c	/^void ffun() {$/;"	f
-file	src/kernel/drivers/ramdisk/ram.c	/^static uint8_t file[NR_MAX_FILE][NR_FILE_SIZE] = {$/;"	v	file:
+file	src/kernel/drivers/ramdisk/ram.h	/^static uint8_t file[NR_MAX_FILE][NR_FILE_SIZE] = {$/;"	v
 filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 filesz	include/elf.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 find_free	src/kernel/memory/mm.c	/^static uint32_t find_free(uint32_t *n) {$/;"	f	file:
@@ -372,6 +383,7 @@ flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
 flags	include/elf.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	include/elf.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
+for_test	src/kernel/syscall/do_syscall.c	/^void for_test(){}$/;"	f
 free	src/kernel/process/schedule.c	/^ListHead ready ,block,free;$/;"	v
 freeDevs	src/kernel/drivers/hal.c	/^static ListHead freeDevs, devices;$/;"	v	file:
 fs	include/x86/memory.h	/^	uint32_t gs, fs, es, ds;							\/\/ data segment registers$/;"	m	struct:TrapFrame
@@ -384,13 +396,14 @@ gdtdesc	boot/start.S	/^gdtdesc:                      # descriptor$/;"	l
 getFreePCB	src/kernel/process/util.c	/^PCB* getFreePCB() {$/;"	f
 get_cooked	src/kernel/drivers/tty/console.c	/^get_cooked(Console *c, pid_t pid, char *buf, int count) {$/;"	f	file:
 get_current_tty	src/kernel/drivers/tty/console.c	/^get_current_tty(void) {$/;"	f
-get_free_msg	include/msg.h	/^Msg* get_free_msg(struct ListHead* lh) {$/;"	f
+get_free_msg	src/kernel/ipc/msg.c	/^Msg* get_free_msg(struct ListHead* lh) {$/;"	f
 get_jiffy	src/kernel/drivers/timer/timer.c	/^get_jiffy() {$/;"	f
 get_kcr3	src/kernel/memory/kvm.c	/^inline CR3* get_kcr3() {$/;"	f
 get_kpdir	src/kernel/memory/kvm.c	/^inline PDE* get_kpdir() {$/;"	f
 get_kptable	src/kernel/memory/kvm.c	/^inline PTE* get_kptable() {$/;"	f
 get_pte_ind	src/kernel/memory/util.c	/^inline uint32_t get_pte_ind(uint32_t n) {$/;"	f
 get_time	src/kernel/drivers/timer/timer.c	/^get_time(Time *tm) {$/;"	f
+getpid	syscall/syscall.c	/^int getpid(){$/;"	f
 getty	src/kernel/drivers/tty/getty.c	/^getty(void) {$/;"	f	file:
 global	include/x86/memory.h	/^		uint32_t global              : 1;$/;"	m	struct:PageTableEntry::__anon5
 global_pid	src/kernel/process/schedule.c	/^pid_t global_pid = 5; \/\/idle.id = 0$/;"	v
@@ -442,7 +455,7 @@ init_serial	src/lib/serial.c	/^init_serial(void) {$/;"	f
 init_timer	src/kernel/drivers/timer/timer.c	/^void init_timer(void) {$/;"	f
 init_tty	src/kernel/drivers/tty/tty.c	/^void init_tty(void) {$/;"	f
 init_zero	src/kernel/drivers/ramdisk/zero.c	/^void init_zero(void) {$/;"	f
-insert_msg	include/msg.h	/^void insert_msg(struct ListHead *lh, Msg *msg) {$/;"	f
+insert_msg	src/kernel/ipc/msg.c	/^void insert_msg(struct ListHead *lh, Msg *msg) {$/;"	f
 int16_t	include/types.h	/^typedef          short int16_t;$/;"	t
 int2Str	src/lib/printk.c	/^uint32_t int2Str(char* str,int32_t n,int32_t base) {    $/;"	f
 int32_t	include/types.h	/^typedef          int   int32_t;$/;"	t
@@ -587,6 +600,7 @@ privilege_level	include/x86/memory.h	/^	uint32_t privilege_level     : 2;$/;"	m	
 privilege_level	include/x86/memory.h	/^	uint32_t privilege_level  : 2;$/;"	m	struct:GateDescriptor
 protect_enable	include/x86/cpu.h	/^		uint32_t protect_enable      : 1;$/;"	m	struct:CR0::__anon6
 putc	src/kernel/drivers/tty/console.c	/^putc(Console *c, char ch) {$/;"	f	file:
+puts	syscall/syscall.c	/^void puts(char *s) {$/;"	f
 r	src/kernel/drivers/tty/tty.h	/^	int i, f, r;$/;"	m	struct:Console
 r	src/kernel/ipc/testpv.c	/^int buf[NBUF],f=0,r=0,g=1;$/;"	v
 ram_thread	src/kernel/drivers/ramdisk/ram.c	/^static void ram_thread(void) {$/;"	f	file:
@@ -654,6 +668,7 @@ strcpy_from_kernel	src/lib/kcpy.c	/^void strcpy_from_kernel(PCB* pcb, char* dest
 strcpy_to_kernel	src/lib/kcpy.c	/^void strcpy_to_kernel(PCB* pcb, char* dest, char* src){$/;"	f
 strlen	src/lib/string.c	/^size_t strlen(const char *str) {$/;"	f
 syscall	src/kernel/syscall/syscall.c	/^syscall(int id,...) {$/;"	f
+syscall	syscall/syscall.c	/^syscall(int id, ...) {$/;"	f
 system	include/x86/memory.h	/^	uint32_t system           : 1;$/;"	m	struct:GateDescriptor
 task_switched	include/x86/cpu.h	/^		uint32_t task_switched       : 1;$/;"	m	struct:CR0::__anon6
 test_consumer	src/kernel/ipc/testpv.c	/^void test_consumer(void) {$/;"	f

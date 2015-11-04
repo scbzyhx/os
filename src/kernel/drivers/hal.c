@@ -82,8 +82,9 @@ dev_rw(const char *dev_name, int type, pid_t reqst_pid, void *buf, off_t offset,
 	m.offset = offset;
 	m.len = len;
 	send(dev->pid, &m);
+    //printk("before receive.reqst_pid=%d\n",reqst_pid);
 	receive(dev->pid, &m);
-
+    //printk("after receive.reqst_pid=%d\n",reqst_pid);
 	return m.ret;
 }
 size_t msg_rw(const char *dev_name, int type, int *buf) {

@@ -29,6 +29,7 @@ typedef struct PCB {
 
     enum STATE state;     //process state
     uint32_t intr_counter; //record intr count for recursive sti
+    uint32_t enabled;    //store interupt state before first lock
     pid_t pid;            //process id
     pid_t parent;         //parent process id
     CR3   cr3;

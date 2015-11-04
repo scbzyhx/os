@@ -11,12 +11,13 @@ AX is ID;
 SYS_READ: BX is file name, CX address of buffer, DX  is len
 SYS_CALL: no other parameter, return the pid of new thread
 SYS_EXEC: 
+SYS_PUTS: bx: address of string
  */
-
+void for_test(){}
 pid_t SYS_fork();
 int SYS_exec(char*file, int argc, char* argv[]);
 void SYS_exit(int exit_code);
-int SYS_waitpid(pid_t pid);
+int SYS_getpid();
 void do_syscall(TrapFrame *tf) {
     int id = tf->eax;
     switch(id) {
@@ -44,11 +45,11 @@ void do_syscall(TrapFrame *tf) {
             break;
         case SYS_SCHEDULE:
             //do nothing here
+            //printk("In SYS_SCHEDULE\n");
             break; 
-        case SYS_WAITPID:
+        case SYS_GETPID:
             {
-                pid_t pid = tf->ebx;
-                tf->eax = SYS_waitpid(pid);
+                tf->eax = SYS_getpid();
                 
             }
             break;
@@ -58,6 +59,29 @@ void do_syscall(TrapFrame *tf) {
                 SYS_exit(exit_code);
             }
             break;
+        case SYS_PUTS:
+            {
+                char buf[256];
+                char *p = (char*)tf->ebx;
+                int i = 0;
+                buf[255] = '\0';
+                while(*p != '\0') {
+                    
+                    if(i == 255) {
+                        printk(buf);
+                        i = 0;
+                    }
+
+                    buf[i++] = *p++;
+                }
+                buf[i] = '\0';
+                printk(buf);
+                
+                tf->eax = 0;
+            }
+            break;
+        default:
+            printk("unkown system call\n");
     }
 }
 
@@ -78,8 +102,9 @@ void SYS_exit(int exit_code) {
     
 }
 
-int SYS_waitpid(pid_t pid) {
-    return 0;
+int SYS_getpid() {
+
+    return current->pid;
 }
 
 

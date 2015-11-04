@@ -39,6 +39,7 @@ void schedule();
 void do_syscall(TrapFrame *tf);
 void irq_handle(TrapFrame *tf) {
 	int irq = tf->irq;
+	current->tf = tf;
 
 	if (irq < 0) {
 		panic("Unhandled exception!");
@@ -46,13 +47,19 @@ void irq_handle(TrapFrame *tf) {
 
 	if (irq < 1000) {
 		extern uint8_t logo[];
+	    //printk("IRQ = %d \n ", irq);
+	    int cr2;
 		switch(irq) {
             case 0x80:
                 do_syscall(tf);
                 break;
-            case 0x14:
+            case 14:
+                asm volatile("movl %%cr2, %0":"=r"(cr2));
+                printk("page fault address = %x\n",cr2);
+                printk("current->pid=%d\n",current->pid);
 		        printk("irq = 14,eip = %x\n",tf->eip);
 		        printk("irq=14, current->cr3 = %x\n",current->cr3.val);
+		        panic("Unexpected exception #%d\n\33[1;31mHint: The machine is always right! For more details about exception #%d, see\n%s\n\33[0m", irq, irq, logo);
 		        break;
 
             default:
@@ -75,7 +82,7 @@ void irq_handle(TrapFrame *tf) {
 		}
 	}
 
-	current->tf = tf;
+	//current->tf = tf;
 	schedule();
 }
 

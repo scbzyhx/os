@@ -11,11 +11,13 @@ void init_mm();
 void init_fs();
 void init_pm();
 
+/*all these functions would enable interupts*/
 void init_driver() {
 	init_hal();
 	init_timer();
 	init_tty();
 	init_ide();
+
 	init_zero();
 	init_ram();
 	init_kmem();

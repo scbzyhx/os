@@ -123,7 +123,8 @@ static int _new_page(PCB *pcb, uint32_t va) {
 
 
 }
-static int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
+//for debug
+int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
     uint32_t va = va_start & 0xfffffc00; // 11111111 1111111 1111100 00000000
     uint32_t end = va_start + memsz; 
     end = (end & 0xfffffc00) + (0x1 << 12); 

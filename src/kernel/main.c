@@ -63,7 +63,11 @@ os_init_cont(void) {
 	/* Initialize processes. You should fill this. */
 	init_proc();
 
+	/*Initialize drivers, I have to lock to prevent unlock in init_driver from enabling interupt*/
+
+
 	welcome();
+
 
 	sti();
 

@@ -115,11 +115,16 @@ init_proc() {
     current->parent = 0;
     current->head.prev = current->head.next = NULL;
     current->state = TASK_RUNNING;
+    current->intr_counter = 0;
+    current->cr3.val = 0; 
+    current->counter = MAX_TIME_SLOT;
+    list_init(&current->msg_list);
+    list_init(&current->sem_list);
+    list_init(&(current->head));
     
-    //init
- //   set_kthread_state(create_kthread(ffun),TASK_RUNNING);
-    //test_proc();
-   // test_msg();
+    init_msg_pool(current);
+    
+    /* hal_list in init_driver results in enable intterrupt, so it makes an error, but how to fix it?*/
     init_driver();
     init_kmem_read_test();
     

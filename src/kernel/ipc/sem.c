@@ -36,6 +36,12 @@ void V(Sem *s) {
 
 //disable intterupt
 void lock() {
+    if(current->intr_counter == 0) {
+        uint32_t eflag;
+        asm volatile("pushf\n\t" "pop %%eax\n\t":"=a"(eflag));
+#define IF_FLAG 0x200
+        current->enabled = (eflag & IF_FLAG ) >> 9;
+    }
     asm volatile("cli");
     // to protect recursive lock (cli)
     current->intr_counter++;
@@ -44,7 +50,7 @@ void lock() {
 //enable intterupt
 void unlock() {
     //intterrupt should be disabled
-    if(--(current->intr_counter) == 0)
+    if(--(current->intr_counter) == 0 && current->enabled != 0) 
         asm volatile("sti");
     //else do nothing
 

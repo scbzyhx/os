@@ -82,6 +82,7 @@ PCB* create_process(uint8_t *buf) {
     PCB* pcb = create_kthread((void*)NULL);
     ph = (struct ProgramHeader*)((char*)elf + elf->phoff);
     eph = ph + elf->phnum;
+    assert(pcb != NULL);
     printk("in create process pid=%d\n",pcb->pid);
 
     for(; ph < eph; ph++) {
@@ -97,7 +98,7 @@ PCB* create_process(uint8_t *buf) {
         //request new page here
         //start= ph->vaddr, len=ph->memsz
         //
-        printk("va=%x\n",va);
+        printk("before alloc pages...va=%x\n",va);
         ret = alloc_pages(pcb,va,len);
         printk("after alloc pages\n");
         assert(ret == 0);  // must be successful

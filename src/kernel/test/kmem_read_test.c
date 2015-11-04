@@ -27,13 +27,18 @@ void kmem_read_test_thread() {
     int tmp;// = alloc_pages(current,VA,4096);
    // printk("after alloc, tmp=%d\n",tmp);
     printk("before create_thread\n");
-    uint32_t file[] = {3,0};
+    uint32_t file[] = {6,0};
     tmp = create_thread(file);
     printk("tmp=%d\n",tmp);
+    wakeup(fetch_pcb(tmp));
+    file[0] = 6;
+    tmp = create_thread(file); 
+    printk("second user proces:%d\n",tmp);
     wakeup(fetch_pcb(tmp));
 }
 
 void init_kmem_read_test(void) {
+    printk("initing test thread\n");
     PCB *p = create_kthread(kmem_read_test_thread);
     printk("init_kmem: pid=%d,state=%d\n",p->pid,p->state);
     READ_KMEM = p->pid;

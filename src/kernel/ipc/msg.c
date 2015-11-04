@@ -35,7 +35,7 @@ void send(pid_t dest, Msg *msg) {
     struct PCB *pcb = fetch_pcb(dest);
     
     if(msg == NULL) {
-        printk("msg is NULL\n");
+        //printk("msg is NULL\n");
         return ;
     }
     msg->dest = dest;
@@ -109,7 +109,8 @@ void _receive(pid_t src,Msg *msg) {
 
 void receive(pid_t src, Msg *msg) {
     lock();
-    _receive(src,msg);    
+    _receive(src,msg);
+    //printk("received an msg, reqst_id = %d\n",msg->req_pid);
     unlock();
 }
 void print_msg(Msg *msg) {
