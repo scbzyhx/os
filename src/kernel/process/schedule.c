@@ -48,7 +48,9 @@ schedule(void) {
     //new scheduling here
     //printk("new scheduler, pid = %d\n",current->pid);
     //printk("new scheduler, state=%d\n",current->state);
-    if(current->state == TASK_DEAD) {
+    if(current == &idle) {
+        current = NULL;
+    }else if(current->state == TASK_DEAD) {
         list_add_after(free.prev,&current->head);
         printk("task_dead, pid = %d\n",current->pid);
         current->state = TASK_EMPTY;
@@ -62,6 +64,9 @@ schedule(void) {
     }else {
         //current->state == TASK_RUNNING
        // printk("state = %d\n",current->state);
+        if (current->state != TASK_RUNNING) {
+            printk("state = %x\n",current->state);
+        }
         assert(current->state == TASK_RUNNING);
         current->counter -= 1;
         if(current->counter == 0) {
@@ -82,12 +87,19 @@ schedule(void) {
         
     }
     current->state = TASK_RUNNING;
+	
     if(current->cr3.val == 0) {
-        write_cr3(get_kcr3());
+	    write_cr3(get_kcr3()); //kernel page dir
     }else {
-        write_cr3(&(current->cr3));
+	    write_cr3(&current->cr3);
     }
-    set_tss_esp0((uint32_t)current->tf);
+
+
+    uint32_t esp0 = (uint32_t)current->tf;
+    esp0 += sizeof(struct TrapFrame);
+    
+
+    set_tss_esp0(esp0);
 
     //printk("after new scheduler, pid = %d\n",current->pid);
    // printk("after new scheduler, state=%d\n",current->state);

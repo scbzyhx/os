@@ -49,11 +49,13 @@ static int _new_page(PCB *pcb, uint32_t va) {
     PTE *ptable;
     if(find_free(&page_n) != 0)
         return -1;
-    printk("pid=%d,cr3=%d\n",pcb->pid,pcb->cr3.val);
+    printk("page_n=%d\n",page_n);
+    printk("pid=%d,cr3=%x\n",pcb->pid,pcb->cr3.val);
+    printk("in _new_page=0x%x\n",va);
     if(pcb->cr3.val == 0) {
         //virtual address
         pdr = (PDE*) va_page(page_n); 
-        printk("page_n=%d, va_in_kernel=%x\n",page_n,(uint32_t)pdr);
+        printk("cr3 == 0, page_n=%d, va_in_kernel=%x\n",page_n,(uint32_t)pdr);
 
         //initialization
         for(idx = 0;idx < NR_PDE; idx++)
@@ -62,9 +64,11 @@ static int _new_page(PCB *pcb, uint32_t va) {
         //set kernel pte, in fact just 4 pdr entries
         ptable = (PTE*)(va_to_pa(get_kptable()));
         printk("ptable_physical_addr=%x\n",(uint32_t)ptable);
-
-        for(idx = 0; idx < PHY_MEM / (PAGE_SIZE*1024); idx++) {
+        printk("&addr = 0x%x\n",pdr);
+        for(idx = 0; idx < NR_PAGE / 1024; idx++) {
             make_pde(&pdr[idx + KOFFSET / (PAGE_SIZE*1024)],ptable);
+            printk("initializing kernel pdr, pdr[0x%x]",idx + KOFFSET / (PAGE_SIZE*1024));
+            printk("=%x\n",ptable);
             ptable = ptable + NR_PTE;
         }
 
@@ -78,12 +82,14 @@ static int _new_page(PCB *pcb, uint32_t va) {
 
         if(find_free(&page_n) != 0)
             return -1;
+        printk("page_n=%d\n",page_n);
     }
 
 
     pdr = (PDE*)pa_to_va((void*)((uint32_t)(pcb->cr3.page_directory_base)<<12));
     pdr = &pdr[va>>22];
-    printk("PDE = %x\n",pdr);
+    printk("PDE[%x]\n",(va>>22));
+    printk("ADRR = 0x%x\n",&pdr);
 
     if(pdr->val == 0) {
         //virtual address
@@ -94,18 +100,21 @@ static int _new_page(PCB *pcb, uint32_t va) {
 
         /*physical address here*/
         ptable = (PTE*) pa_page(page_n);
-        printk("PHY OF PTE TABLE = %x\n",ptable);
+        printk("pte table = 0,phy_addr= %x\n",ptable);
         make_pde(pdr, ptable);
+        printk("PDE[0x%x]=",(va>>22));
+        printk("0x%x\n",ptable);
         
         set(page_n);
         
         if(find_free(&page_n) != 0)
             return -1;
+        printk("page_n=%d\n",page_n);
     }
 
     ptable = (PTE*)pa_to_va((void*)((uint32_t)(pdr->page_frame)<<12));
     ptable = &ptable[(va & 0x3ff000 )>>12]; // 0000 0000 0011 1111 1111 0000 0000 0000
-    
+    printk("PTE[0x%x]\n",(va & 0x3ff000 )>>12);
     printk("BEFORE SET PAGE PTE = %x\n",ptable);
 
     if(ptable->val != 0) 
@@ -113,7 +122,8 @@ static int _new_page(PCB *pcb, uint32_t va) {
 
     ptr = pa_page(page_n);
 
-    printk("PHY PTR = %x\n",ptr);
+    printk("PTE[0x%x]=",(va & 0x3ff000 )>>12);
+    printk("0x%x\n",ptr);
 
     make_pte(ptable,ptr);
 
@@ -124,15 +134,26 @@ static int _new_page(PCB *pcb, uint32_t va) {
 
 }
 //for debug
+static inline uint32_t is_free(uint32_t n);
 int new_page(PCB* pcb, uint32_t va_start, uint32_t memsz) {
-    uint32_t va = va_start & 0xfffffc00; // 11111111 1111111 1111100 00000000
+    uint32_t va = va_start & 0xfffff000; // 11111111 1111111 1111100 00000000
     uint32_t end = va_start + memsz; 
-    end = (end & 0xfffffc00) + (0x1 << 12); 
+    if( va == (end & 0xfffff000)) {
+        //in the same page
+        end = (end & 0xfffff000) + (0x1 << 12);
+
+    }// else  end = end
+    //end = (va == (end)&0xfffff000 ) ? (end & 0xfffff000) + (0x1 << 12) : ; 
     //test
     printk("in new_page, start = %x\n",va);
     printk("in new_page, end = %x\n",end);
+    uint32_t i = 0;
+    for(i=0; i<NR_USER_PAGE; ++i) {
+        if(is_free(i) != 0)
+            printk("%d  ",i);
+    }
     
-   // return 0;
+   // return 0
     for(; va < end; va += PAGE_SIZE) { 
         if(_new_page(pcb,va) != 0) 
             assert(0); // allcoate error, 
@@ -156,7 +177,7 @@ static void mm_thread(void) {
 			pcb = fetch_pcb(m.req_pid); //req_pid store pid of thread, equal to source or not
 			printk("req_pid=%d\n",pcb->pid);
 			m.ret = new_page(pcb,m.offset,m.len);
-			printk("mm_thread id=%x\n",m.req_pid);
+			printk("mm_thread id=%d\n",m.req_pid);
 			
 			m.dest = m.src;
 			m.src = MM_PID;
@@ -228,10 +249,9 @@ static inline uint32_t is_free(uint32_t n) {
 static uint32_t find_free(uint32_t *n) {
     //find an empty page
     uint32_t ind = 0;
-    for(;ind <  NR_KERNEL_PAGE; ++ind) {
+    for(;ind <  NR_USER_PAGE; ++ind) {
         if(is_free(ind) == 0) {
             *n = ind;
-            printk("page_n=%d\n",ind);
             return 0;
         }
     }

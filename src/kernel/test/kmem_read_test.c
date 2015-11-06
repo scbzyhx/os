@@ -24,17 +24,18 @@ void kmem_read_test_thread() {
     }*/
     /*now test memory allocation*/
     //printk("before alloc: pid=%d,state=%d\n",current->pid,current->state);
-    int tmp;// = alloc_pages(current,VA,4096);
-   // printk("after alloc, tmp=%d\n",tmp);
+    int tmp,tmp2;
     printk("before create_thread\n");
     uint32_t file[] = {6,0};
     tmp = create_thread(file);
     printk("tmp=%d\n",tmp);
+    //wakeup(fetch_pcb(tmp));
+    file[0] = 5;
+    tmp2 = create_thread(file); 
+    printk("second user proces:%d\n",tmp2);
     wakeup(fetch_pcb(tmp));
-    file[0] = 6;
-    tmp = create_thread(file); 
-    printk("second user proces:%d\n",tmp);
-    wakeup(fetch_pcb(tmp));
+    wakeup(fetch_pcb(tmp2));
+    
 }
 
 void init_kmem_read_test(void) {

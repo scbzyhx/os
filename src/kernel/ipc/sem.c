@@ -38,7 +38,7 @@ void V(Sem *s) {
 void lock() {
     if(current->intr_counter == 0) {
         uint32_t eflag;
-        asm volatile("pushf\n\t" "pop %%eax\n\t":"=a"(eflag));
+        asm volatile("pushf\n\t" "pop %0\n\t":"=r"(eflag));
 #define IF_FLAG 0x200
         current->enabled = (eflag & IF_FLAG ) >> 9;
     }

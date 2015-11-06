@@ -37,6 +37,7 @@ add_irq_handle(int irq, void (*func)(void) ) {
 }
 void schedule();
 void do_syscall(TrapFrame *tf);
+uint32_t pcb_va_to_pa(PCB *pcb, uint32_t va);
 void irq_handle(TrapFrame *tf) {
 	int irq = tf->irq;
 	current->tf = tf;
@@ -55,6 +56,7 @@ void irq_handle(TrapFrame *tf) {
                 break;
             case 14:
                 asm volatile("movl %%cr2, %0":"=r"(cr2));
+                //printk("%x\n",pcb_va_to_pa(current,cr2));
                 printk("page fault address = %x\n",cr2);
                 printk("current->pid=%d\n",current->pid);
 		        printk("irq = 14,eip = %x\n",tf->eip);

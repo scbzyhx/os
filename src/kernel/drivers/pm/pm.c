@@ -70,6 +70,8 @@ static inline uint32_t to_next_page(uint32_t addr) {
 
 }
 static int alloc_user_stack(PCB*pcb) {
+    printk("user stack begin=%x\n",USER_STACK_BEGIN);
+    printk("user stack len=%x\n",USER_STACK_LEN);
     return alloc_pages(pcb,USER_STACK_BEGIN,USER_STACK_LEN);
 }
 //#define ENTRY 0X8048074
@@ -103,10 +105,6 @@ PCB* create_process(uint8_t *buf) {
         printk("after alloc pages\n");
         assert(ret == 0);  // must be successful
         printk("after alloc pages and assertion\n");
-        printk("before alloc stack\n");
-        ret = alloc_user_stack(pcb);
-        assert(ret==0);
-        printk("after alloc user stack\n");
         
         //attention: virtual adrress to physical address
         offset = ph->off;
@@ -124,6 +122,10 @@ PCB* create_process(uint8_t *buf) {
         }
 
     }
+    printk("before alloc stack\n");
+    ret = alloc_user_stack(pcb);
+    assert(ret==0);
+    printk("after alloc user stack\n");
     struct TrapFrame* tf = ((struct TrapFrame*)(pcb->tf));
     tf->eip = elf->entry;//ENTRY;
     //set user stack here
